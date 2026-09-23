@@ -3,130 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kasir Rizqiyya Pertabotol New Version</title>
+    <title>Rizqiyya Pertabotol - Luxury POS</title>
     <style>
         :root {
-            --primary: #1b365d;
-            --accent: #27ae60;
-            --danger: #c0392b;
-            --warning: #f39c12;
-            --bg: #f4f7f6;
-            --card-bg: #ffffff;
+            --bg-deep: #0f172a;
+            --bg-card: #1e293b;
+            --bg-glass: rgba(30, 41, 59, 0.7);
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-hover: #b89728;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --border: rgba(212, 175, 55, 0.2);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: #333; padding-bottom: 40px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif; }
+        body { background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); color: var(--text-main); min-height: 100vh; padding-bottom: 40px; }
 
         .hidden { display: none !important; }
-        .container { max-width: 1250px; margin: 0 auto; padding: 15px; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
 
-        /* Halaman Login */
+        /* Luxury Login Section */
         #login-section {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background: linear-gradient(135deg, #1b365d, #2c3e50);
+            background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
         }
         .login-card {
-            background: var(--card-bg); padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            width: 100%; max-width: 420px; text-align: center;
+            background: var(--bg-card); padding: 40px; border-radius: 16px; border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); width: 100%; max-width: 440px; text-align: center;
+            backdrop-filter: blur(10px);
         }
-        .logo-title { font-size: 22px; font-weight: bold; color: var(--primary); margin: 15px 0 5px 0; }
-        .logo-sub { font-size: 13px; color: #666; margin-bottom: 25px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; }
-        .btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:hover { background: #219653; }
-        .btn-danger { background: var(--danger); }
-        .btn-danger:hover { background: #a93226; }
-        .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; }
+        .logo-title { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: 1px; margin: 15px 0 5px 0; }
+        .logo-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 12px; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; }
+        .form-control { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; color: white; transition: 0.3s; }
+        .form-control:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        
+        .btn-luxury {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #0f172a; border: none; border-radius: 8px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-luxury:hover { background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); }
+        .btn-danger-luxury { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: white; }
+        .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 600; }
 
-        /* Header Utama */
+        /* Luxury Header */
         header {
-            background: var(--primary); color: white; padding: 15px 20px; border-radius: 10px;
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: var(--bg-card); padding: 18px 25px; border-radius: 14px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
-        .header-left h1 { font-size: 20px; margin-bottom: 3px; }
-        .header-left span { background: #f39c12; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .header-left h1 { font-size: 20px; color: var(--gold); font-weight: 800; letter-spacing: 0.5px; }
+        .header-left span { background: rgba(212, 175, 55, 0.15); color: var(--gold); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; border: 1px solid var(--border); }
+        .header-right { display: flex; align-items: center; gap: 20px; font-size: 14px; }
 
-        /* Grid Utama Dashboard */
-        .dashboard-grid { display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 20px; }
-        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        /* Dashboard Grid */
+        .dashboard-grid { display: grid; grid-template-columns: 1.7fr 1.3fr; gap: 25px; }
+        @media (max-width: 950px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
-        .card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .card h3 { margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid #f1f1f1; padding-bottom: 8px; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: var(--bg-card); padding: 25px; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(0,0,0,0.3); margin-bottom: 25px; }
+        .card h3 { margin-bottom: 18px; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 10px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Manajemen Stok Galon & Botol */
-        .stock-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stock-box { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; text-align: center; }
-        .stock-box h4 { font-size: 13px; color: #555; margin-bottom: 5px; }
-        .stock-box .count { font-size: 20px; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
-        .stock-controls { display: flex; justify-content: center; gap: 5px; }
-        .stock-controls button { padding: 4px 10px; font-size: 14px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; }
+        /* Stock Cards */
+        .stock-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+        .stock-box { background: #0f172a; border: 1px solid var(--border); padding: 15px; border-radius: 10px; text-align: center; }
+        .stock-box h4 { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .stock-box .count { font-size: 24px; font-weight: 800; color: var(--gold-light); margin-bottom: 10px; }
+        .stock-controls { display: flex; justify-content: center; gap: 8px; }
+        .stock-controls button { padding: 6px 14px; font-size: 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; color: white; transition: 0.2s; }
         .btn-plus { background: var(--accent); }
         .btn-minus { background: var(--danger); }
 
-        /* Katalog BBM */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        /* Ordered Product Grid (Urut Berdasarkan Kategori & Tipe) */
+        .product-section-title { font-size: 13px; font-weight: 700; color: var(--gold-light); margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--gold); padding-left: 8px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 15px; }
         .product-item {
-            background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: 0.2s;
+            background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; transition: 0.3s;
         }
-        .product-item:hover { border-color: var(--accent); box-shadow: 0 3px 10px rgba(39, 174, 96, 0.15); transform: translateY(-2px); }
-        .product-item h4 { font-size: 13px; margin-bottom: 5px; color: #333; }
-        .product-item .price { font-size: 12px; color: #7f8c8d; font-weight: bold; margin-bottom: 3px; }
-        .badge-tipe { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px; color: white; font-weight: bold; }
-        .badge-tunai { background: #2980b9; }
-        .badge-qris { background: #8e44ad; }
+        .product-item:hover { border-color: var(--gold); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2); transform: translateY(-3px); }
+        .product-item h4 { font-size: 13px; margin-bottom: 6px; color: white; font-weight: 600; }
+        .product-item .price { font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+        .badge-tipe { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 4px; color: white; font-weight: 700; text-transform: uppercase; }
+        .badge-tunai { background: #2563eb; }
+        .badge-qris { background: #9333ea; }
 
-        /* Keranjang & Tabel */
+        /* Tables & Cart */
         table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        table th, table td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
-        table th { background: #f8f9fa; color: #444; }
-        .total-section { font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 15px; background: #e8f8f5; padding: 10px; border-radius: 6px; }
+        table th, table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        table th { background: #0f172a; color: var(--gold-light); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .total-section { font-size: 17px; font-weight: 800; display: flex; justify-content: space-between; margin-bottom: 18px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border); padding: 14px; border-radius: 8px; color: var(--gold-light); }
 
-        /* Modal QRIS Interaktif */
+        /* QRIS Modal Luxury */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-            display: flex; justify-content: center; align-items: center; z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px);
         }
         .modal-content {
-            background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: var(--bg-card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 90%; max-width: 420px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
         }
-        .qris-img { width: 220px; height: auto; border: 2px solid #ddd; border-radius: 8px; margin: 15px 0; }
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 15px; }
-        .status-waiting { background: #fef5e7; color: #d68910; border: 1px solid #f39c12; }
-        .status-success { background: #e8f8f5; color: #27ae60; border: 1px solid #27ae60; }
+        .qris-img { width: 240px; height: auto; border: 3px solid var(--gold); border-radius: 12px; margin: 15px 0; background: white; padding: 5px; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+        .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-waiting { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .status-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
 
-        /* Tab Menu & Laporan */
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #e2e8f0; padding: 4px; border-radius: 6px; }
-        .tab-btn { flex: 1; padding: 8px; border: none; background: transparent; font-weight: bold; font-size: 13px; cursor: pointer; border-radius: 4px; color: #555; }
-        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* Tabs */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 6px; color: var(--text-muted); transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-btn.active { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #0f172a; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
 
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .report-card { background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 4px solid var(--primary); }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+        .report-card { background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid var(--border); border-left: 4px solid var(--gold); }
         .report-card.green { border-left-color: var(--accent); }
-        .report-card.orange { border-left-color: var(--warning); }
-        .report-card h4 { font-size: 12px; color: #666; margin-bottom: 4px; }
-        .report-card .val { font-size: 16px; font-weight: bold; color: #2c3e50; }
+        .report-card.orange { border-left-color: #f59e0b; }
+        .report-card h4 { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .report-card .val { font-size: 18px; font-weight: 800; color: var(--gold-light); }
 
-        .table-responsive { max-height: 250px; overflow-y: auto; }
+        .table-responsive { max-height: 280px; overflow-y: auto; }
+        .table-responsive::-webkit-scrollbar { width: 6px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <!-- ==================== HALAMAN LOGIN ==================== -->
+    <!-- ==================== HALAMAN LOGIN LUXURY ==================== -->
     <div id="login-section">
         <div class="login-card">
-            <!-- Logo Toko -->
-            <svg width="75" height="75" viewBox="0 0 100 100" style="margin: 0 auto; display: block;">
-                <circle cx="50" cy="50" r="46" fill="#1b365d" />
-                <path d="M35 65 L50 35 L65 65 Z" fill="#f39c12" />
-                <rect x="42" y="50" width="16" height="20" fill="#ffffff" />
-                <text x="50" y="85" font-size="12" fill="white" font-weight="bold" text-anchor="middle">RIZQIYYA</text>
+            <!-- Luxury Vector Logo -->
+            <svg width="80" height="80" viewBox="0 0 100 100" style="margin: 0 auto; display: block; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">
+                <circle cx="50" cy="50" r="46" fill="#0f172a" stroke="#d4af37" stroke-width="3" />
+                <path d="M35 65 L50 32 L65 65 Z" fill="#d4af37" />
+                <rect x="42" y="52" width="16" height="18" fill="#1e293b" />
+                <text x="50" y="83" font-size="10" fill="#f3e5ab" font-weight="800" text-anchor="middle" letter-spacing="1">RIZQIYYA</text>
             </svg>
             <div class="logo-title">Rizqiyya Pertabotol</div>
-            <div class="logo-sub">Sistem Manajemen Kasir & BBM Eceran</div>
+            <div class="logo-sub">Executive POS System</div>
 
             <div class="form-group">
                 <label for="login-branch">Pilih Cabang Toko</label>
@@ -136,7 +148,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="shift-user">Nama Kasir</label>
+                <label for="shift-user">Nama Kasir / Shift</label>
                 <select id="shift-user" class="form-control">
                     <option value="" disabled selected>-- Pilih Kasir --</option>
                     <option value="Hafiz">Hafiz</option>
@@ -148,41 +160,42 @@
             </div>
             <div class="form-group">
                 <label for="shift-pass">Password Kasir</label>
-                <input type="password" id="shift-pass" class="form-control" placeholder="Masukkan password">
+                <input type="password" id="shift-pass" class="form-control" placeholder="••••">
             </div>
             <div class="form-group">
                 <label for="modal-awal">Modal Awal Kasir (Rp)</label>
                 <input type="number" id="modal-awal" class="form-control" value="100000" placeholder="100000">
             </div>
-            <button class="btn" onclick="handleLogin()">Masuk Shift</button>
+            <button class="btn-luxury" onclick="handleLogin()">Masuk Shift</button>
             <div id="login-error" class="error-msg"></div>
         </div>
     </div>
 
-    <!-- ==================== HALAMAN UTAMA APLIKASI ==================== -->
+    <!-- ==================== HALAMAN UTAMA DASHBOARD ==================== -->
     <div id="app-section" class="container hidden">
         <header>
             <div class="header-left">
                 <h1 id="header-branch-title">Toko Rumah</h1>
-                <span>Kasir: <strong id="active-user-display">-</strong></span>
+                <span>Kasir: <strong id="active-user-display" style="color: var(--gold-light);">-</strong></span>
             </div>
             <div class="header-right">
-                <div>Modal Awal: <strong id="header-modal">Rp 0</strong></div>
-                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px;" onclick="closeShiftAndExit()">Tutup / Keluar Shift</button>
+                <div>Modal Awal: <strong id="header-modal" style="color: var(--gold-light);">Rp 0</strong></div>
+                <button class="btn-luxury btn-danger-luxury" style="padding: 8px 16px; font-size: 12px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & Kirim WA</button>
             </div>
         </header>
 
         <div class="dashboard-grid">
-            <!-- KOLOM KIRI -->
+            <!-- KOLOM KIRI: STOK & KATALOG BERURUTAN -->
             <div>
+                <!-- Manajemen Stok Galon & Botol -->
                 <div class="card">
                     <h3>
                         <span>Manajemen Stok BBM Eceran</span>
-                        <small style="font-size: 11px; color: #666;">Update Real-time</small>
+                        <small style="font-size: 11px; color: var(--text-muted); font-weight: normal;">Real-Time Stock</small>
                     </h3>
                     <div class="stock-box-container">
                         <div class="stock-box">
-                            <h4>Stok Galon Terisi</h4>
+                            <h4>Galon Terisi</h4>
                             <div class="count" id="stock-galon">15</div>
                             <div class="stock-controls">
                                 <button class="btn-minus" onclick="adjustStock('galon', -1)">-</button>
@@ -190,7 +203,7 @@
                             </div>
                         </div>
                         <div class="stock-box">
-                            <h4>Stok Botol Terisi</h4>
+                            <h4>Botol Terisi</h4>
                             <div class="count" id="stock-botol">45</div>
                             <div class="stock-controls">
                                 <button class="btn-minus" onclick="adjustStock('botol', -1)">-</button>
@@ -200,19 +213,26 @@
                     </div>
                 </div>
 
+                <!-- Katalog BBM Terurut (Pertalite lalu Pertamax) -->
                 <div class="card">
-                    <h3>Pilih Produk BBM Eceran</h3>
-                    <div class="product-grid" id="product-catalog"></div>
+                    <h3>Katalog BBM Eceran</h3>
+                    
+                    <div class="product-section-title">Pertalite (Tunai & QRIS)</div>
+                    <div class="product-grid" id="catalog-pertalite"></div>
+
+                    <div class="product-section-title">Pertamax (Tunai & QRIS)</div>
+                    <div class="product-grid" id="catalog-pertamax"></div>
                 </div>
             </div>
 
-            <!-- KOLOM KANAN -->
+            <!-- KOLOM KANAN: KASIR & LAPORAN -->
             <div>
                 <div class="tabs">
                     <button class="tab-btn active" onclick="switchTab('pos')">Kasir (POS)</button>
                     <button class="tab-btn" onclick="switchTab('rekap')">Laporan & Omset</button>
                 </div>
 
+                <!-- Panel POS -->
                 <div id="tab-pos" class="card">
                     <h3>Keranjang Belanja</h3>
                     <div class="table-responsive">
@@ -227,7 +247,7 @@
                                 </tr>
                             </thead>
                             <tbody id="cart-items">
-                                <tr><td colspan="5" style="text-align: center; color: #999;">Keranjang masih kosong</td></tr>
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keranjang masih kosong</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -240,14 +260,15 @@
                     <div class="form-group" id="cash-payment-group">
                         <label for="cash-given">Uang Tunai Diterima (Rp)</label>
                         <input type="number" id="cash-given" class="form-control" placeholder="0" oninput="calculateChange()">
-                        <div style="font-size: 13px; margin-top: 5px; font-weight: bold; color: #27ae60;">
+                        <div style="font-size: 13px; margin-top: 6px; font-weight: 700; color: var(--accent);">
                             Kembalian: <span id="change-amount">Rp 0</span>
                         </div>
                     </div>
 
-                    <button class="btn" onclick="checkoutProcess()">Proses Pembayaran & Kirim WA</button>
+                    <button class="btn-luxury" onclick="checkoutProcess()">Proses Pembayaran & Cetak WA</button>
                 </div>
 
+                <!-- Panel Rekap & Omset -->
                 <div id="tab-rekap" class="card hidden">
                     <h3>Rekap Keuangan Shift Ini</h3>
                     <div class="report-grid">
@@ -260,7 +281,7 @@
                             <div class="val" id="report-tx-count">0</div>
                         </div>
                         <div class="report-card orange">
-                            <h4>Uang Dipakai (Saldo Kasir)</h4>
+                            <h4>Saldo Kasir (Uang Dipakai)</h4>
                             <div class="val" id="report-pemasukan">Rp 0</div>
                         </div>
                         <div class="report-card">
@@ -269,22 +290,22 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 15px; font-size: 13px; background: #e8f8f5; padding: 10px; border-radius: 6px;">
-                        <div>Penjualan Tunai: <strong id="report-tunai">Rp 0</strong></div>
-                        <div>Penjualan QRIS: <strong id="report-qris">Rp 0</strong></div>
+                    <div style="margin-bottom: 15px; font-size: 13px; background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span>Penjualan Tunai:</span> <strong style="color: #60a5fa;" id="report-tunai">Rp 0</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Penjualan QRIS:</span> <strong style="color: #c084fc;" id="report-qris">Rp 0</strong></div>
                     </div>
 
                     <div style="margin-top: 15px;">
-                        <h4 style="font-size: 13px; margin-bottom: 8px; color: var(--primary);">Catat Pengeluaran Operasional Baru</h4>
+                        <h4 style="font-size: 12px; margin-bottom: 8px; color: var(--gold-light); text-transform: uppercase;">Catat Pengeluaran Operasional</h4>
                         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                            <input type="text" id="expense-desc" class="form-control" placeholder="Keterangan" style="flex: 2;">
+                            <input type="text" id="expense-desc" class="form-control" placeholder="Keterangan (cth: Konsumsi)" style="flex: 2;">
                             <input type="number" id="expense-amount" class="form-control" placeholder="Nominal" style="flex: 1;">
                         </div>
-                        <button class="btn btn-danger" style="padding: 8px; font-size: 13px;" onclick="addExpense()">Simpan Pengeluaran</button>
+                        <button class="btn-luxury btn-danger-luxury" style="padding: 10px; font-size: 12px;" onclick="addExpense()">Simpan Pengeluaran</button>
                     </div>
 
-                    <div style="margin-top: 15px;">
-                        <h4 style="font-size: 13px; margin-bottom: 5px; color: var(--primary);">Riwayat Transaksi Shift Ini</h4>
+                    <div style="margin-top: 20px;">
+                        <h4 style="font-size: 12px; margin-bottom: 8px; color: var(--gold-light); text-transform: uppercase;">Riwayat Transaksi Shift Ini</h4>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -295,7 +316,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="history-transactions">
-                                    <tr><td colspan="3" style="text-align: center; color: #999;">Belum ada transaksi</td></tr>
+                                    <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Belum ada transaksi</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -308,22 +329,22 @@
     <!-- ==================== MODAL VERIFIKASI QRIS ==================== -->
     <div id="qris-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 style="color: var(--primary); margin-bottom: 5px;">Scan Pembayaran QRIS</h3>
-            <p style="font-size: 13px; color: #666;">Silakan scan barcode di bawah ini untuk menyelesaikan pembayaran</p>
+            <h3 style="color: var(--gold); margin-bottom: 5px;">Scan Pembayaran QRIS</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Silakan scan barcode di bawah ini untuk menyelesaikan pembayaran</p>
             
             <div id="qris-status-box" class="status-badge status-waiting">Menunggu Scan Pelanggan...</div>
             
-            <!-- Foto Barcode QRIS Asli -->
+            <!-- Foto Barcode QRIS Asli (Menggunakan file gambar yang disediakan) -->
             <div>
                 <img src="watermarked_img_3200e6.jpg" alt="QRIS Barcode Rizqiyya" class="qris-img">
             </div>
 
-            <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary);" id="qris-modal-total">
+            <div style="font-size: 18px; font-weight: 800; margin-bottom: 18px; color: var(--gold-light);" id="qris-modal-total">
                 Total: Rp 0
             </div>
 
-            <button class="btn" id="btn-simulate-qris" onclick="completeQrisPayment()">Simulasi Berhasil Tercentang (✔)</button>
-            <button class="btn btn-danger" style="margin-top: 8px; background: #95a5a6;" onclick="closeQrisModal()">Batalkan</button>
+            <button class="btn-luxury" id="btn-simulate-qris" onclick="completeQrisPayment()">Simulasi Berhasil Tercentang (✔)</button>
+            <button class="btn-luxury btn-danger-luxury" style="margin-top: 10px;" onclick="closeQrisModal()">Batalkan</button>
         </div>
     </div>
 
@@ -336,15 +357,18 @@
             "Nizar": "1111"
         };
 
+        // Katalog Produk Terurut: Pertalite dulu, lalu Pertamax
         const products = [
-            { id: 1, name: "Pertalite 1 Liter (Tunai)", price: 13000, type: "Tunai", category: "Pertalite 1L" },
-            { id: 2, name: "Pertalite 1 Liter (QRIS)", price: 14000, type: "QRIS", category: "Pertalite 1L" },
-            { id: 3, name: "Pertalite 2 Liter (Tunai)", price: 25000, type: "Tunai", category: "Pertalite 2L" },
-            { id: 4, name: "Pertalite 2 Liter (QRIS)", price: 26000, type: "QRIS", category: "Pertalite 2L" },
-            { id: 5, name: "Pertamax 1 Liter (Tunai)", price: 19000, type: "Tunai", category: "Pertamax 1L" },
-            { id: 6, name: "Pertamax 1 Liter (QRIS)", price: 20000, type: "QRIS", category: "Pertamax 1L" },
-            { id: 7, name: "Pertamax 2 Liter (Tunai)", price: 38000, type: "Tunai", category: "Pertamax 2L" },
-            { id: 8, name: "Pertamax 2 Liter (QRIS)", price: 39000, type: "QRIS", category: "Pertamax 2L" },
+            // Pertalite
+            { id: 1, name: "Pertalite 1 Liter", price: 13000, type: "Tunai", category: "pertalite" },
+            { id: 2, name: "Pertalite 1 Liter", price: 14000, type: "QRIS", category: "pertalite" },
+            { id: 3, name: "Pertalite 2 Liter", price: 25000, type: "Tunai", category: "pertalite" },
+            { id: 4, name: "Pertalite 2 Liter", price: 26000, type: "QRIS", category: "pertalite" },
+            // Pertamax
+            { id: 5, name: "Pertamax 1 Liter", price: 19000, type: "Tunai", category: "pertamax" },
+            { id: 6, name: "Pertamax 1 Liter", price: 20000, type: "QRIS", category: "pertamax" },
+            { id: 7, name: "Pertamax 2 Liter", price: 38000, type: "Tunai", category: "pertamax" },
+            { id: 8, name: "Pertamax 2 Liter", price: 39000, type: "QRIS", category: "pertamax" },
         ];
 
         let currentSession = {
@@ -396,7 +420,18 @@
             }
         }
 
-        // Fungsi Tutup Shift dan Kirim Laporan Lengkap ke WhatsApp 085710127234
+        // Perbaikan sistem kirim WhatsApp agar aman dari pemblokiran popup/error pengkodean
+        function sendWhatsAppMessage(phone, message) {
+            const encodedMessage = encodeURIComponent(message);
+            // Menggunakan universal link api.whatsapp.com yang kompatibel di semua browser desktop/mobile
+            const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+            const win = window.open(waUrl, '_blank');
+            if (!win) {
+                // Fallback jika popup diblokir browser
+                window.location.href = waUrl;
+            }
+        }
+
         function closeShiftAndExit() {
             if (confirm("Apakah Anda yakin ingin menutup shift ini? Laporan rekapitulasi akan dikirim otomatis ke WhatsApp.")) {
                 const waNumber = "085710127234";
@@ -415,13 +450,10 @@
                                 `\n----------------------------------` +
                                 `\nStatus: SHIFT DITUTUP (LUNAS)`;
 
-                const encodedMessage = encodeURIComponent(message);
-                const waUrl = `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodedMessage}`;
-                
-                window.open(waUrl, '_blank');
+                sendWhatsAppMessage(waNumber, message);
                 setTimeout(() => {
                     location.reload();
-                }, 1000);
+                }, 1200);
             }
         }
 
@@ -449,8 +481,12 @@
         }
 
         function renderCatalog() {
-            const grid = document.getElementById("product-catalog");
-            grid.innerHTML = "";
+            const containerPertalite = document.getElementById("catalog-pertalite");
+            const containerPertamax = document.getElementById("catalog-pertamax");
+            
+            containerPertalite.innerHTML = "";
+            containerPertamax.innerHTML = "";
+
             products.forEach(p => {
                 const item = document.createElement("div");
                 item.className = "product-item";
@@ -460,7 +496,12 @@
                     <div class="price">Rp ${p.price.toLocaleString('id-ID')}</div>
                     <span class="badge-tipe ${p.type === 'Tunai' ? 'badge-tunai' : 'badge-qris'}">${p.type}</span>
                 `;
-                grid.appendChild(item);
+
+                if (p.category === "pertalite") {
+                    containerPertalite.appendChild(item);
+                } else {
+                    containerPertamax.appendChild(item);
+                }
             });
         }
 
@@ -486,7 +527,7 @@
             tbody.innerHTML = "";
 
             if (currentSession.cart.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #999;">Keranjang masih kosong</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Keranjang masih kosong</td></tr>`;
                 totalEl.textContent = "Rp 0";
                 document.getElementById("change-amount").textContent = "Rp 0";
                 return;
@@ -502,7 +543,7 @@
                     <td><span class="badge-tipe ${item.type === 'Tunai' ? 'badge-tunai' : 'badge-qris'}">${item.type}</span></td>
                     <td>${item.qty}</td>
                     <td>Rp ${sub.toLocaleString('id-ID')}</td>
-                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:2px 6px; border-radius:3px; cursor:pointer;">X</button></td>
+                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -579,7 +620,21 @@
             }
 
             updateReportUI();
-            sendWhatsAppNotification(tx);
+            
+            // Kirim WhatsApp Struk Otomatis
+            const waNumber = "085710127234";
+            let itemsText = tx.items.map(i => `- ${i.name} (${i.qty}x) : Rp ${(i.price * i.qty).toLocaleString('id-ID')}`).join('\n');
+            const message = `*STRUK NOTIFIKASI RIZQIYYA PERTABOTOL*` +
+                            `\nCabang: ${currentSession.branch}` +
+                            `\nKasir: ${currentSession.cashier}` +
+                            `\nWaktu: ${tx.time}` +
+                            `\nMetode: ${tx.method}` +
+                            `\n\n*Rincian Belanja:*` +
+                            `\n${itemsText}` +
+                            `\n\n*Total Bayar: Rp ${tx.total.toLocaleString('id-ID')}*` +
+                            `\nStatus: LUNAS (✔ Berhasil)`;
+
+            sendWhatsAppMessage(waNumber, message);
 
             alert(`TRANSAKSI BERHASIL (${method})!\nTotal: Rp ${total.toLocaleString('id-ID')}\nStruk tercetak & terkirim otomatis via WhatsApp.`);
 
@@ -618,7 +673,7 @@
             const historyTbody = document.getElementById("history-transactions");
             historyTbody.innerHTML = "";
             if (currentSession.transactions.length === 0) {
-                historyTbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #999;">Belum ada transaksi</td></tr>`;
+                historyTbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Belum ada transaksi</td></tr>`;
                 return;
             }
 
@@ -631,26 +686,6 @@
                 `;
                 historyTbody.appendChild(tr);
             });
-        }
-
-        function sendWhatsAppNotification(tx) {
-            const waNumber = "085710127234";
-            let itemsText = tx.items.map(i => `- ${i.name} (${i.qty}x) : Rp ${(i.price * i.qty).toLocaleString('id-ID')}`).join('\n');
-            
-            const message = `*STRUK NOTIFIKASI RIZQIYYA PERTABOTOL*` +
-                            `\nCabang: ${currentSession.branch}` +
-                            `\nKasir: ${currentSession.cashier}` +
-                            `\nWaktu: ${tx.time}` +
-                            `\nMetode: ${tx.method}` +
-                            `\n\n*Rincian Belanja:*` +
-                            `\n${itemsText}` +
-                            `\n\n*Total Bayar: Rp ${tx.total.toLocaleString('id-ID')}*` +
-                            `\nStatus: LUNAS (✔ Berhasil)`;
-
-            const encodedMessage = encodeURIComponent(message);
-            const waUrl = `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodedMessage}`;
-            
-            window.open(waUrl, '_blank');
         }
     </script>
 </body>
