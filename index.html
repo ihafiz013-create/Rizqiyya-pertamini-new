@@ -434,7 +434,7 @@
 
         function closeShiftAndExit() {
             if (confirm("Apakah Anda yakin ingin menutup shift ini? Laporan rekapitulasi akan dikirim otomatis ke WhatsApp.")) {
-                const waNumber = "+6285710127234";
+                const waNumber = "085710127234";
                 
                 const message = `*LAPORAN TUTUP SHIFT RIZQIYYA PERTABOTOL*` +
                                 `\nCabang: ${currentSession.branch}` +
@@ -622,7 +622,7 @@
             updateReportUI();
             
             // Kirim WhatsApp Struk Otomatis
-            const waNumber = "085701994169";
+            const waNumber = "085710127234";
             let itemsText = tx.items.map(i => `- ${i.name} (${i.qty}x) : Rp ${(i.price * i.qty).toLocaleString('id-ID')}`).join('\n');
             const message = `*STRUK NOTIFIKASI RIZQIYYA PERTABOTOL*` +
                             `\nCabang: ${currentSession.branch}` +
