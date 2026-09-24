@@ -13,6 +13,8 @@
     <title>Rizqiyya Pertabotol - Ultimate POS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Library Barcode Scanner -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
         :root {
@@ -76,11 +78,12 @@
         .total-box { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.3s; }
         .total-amount { font-size: 22px; font-weight: 800; color: var(--accent); }
 
-        .pay-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .pay-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
         .pay-btn { padding: 12px; background: var(--bg-dark); border: 2px solid var(--border); border-radius: 10px; color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 12px; }
         .pay-btn.active-tunai { background: rgba(34,197,94,0.1); border-color: var(--accent); color: var(--accent); }
         .pay-btn.active-qris { background: rgba(147, 51, 234, 0.1); border-color: var(--qris-color); color: #c084fc; }
         .pay-btn.active-kasbon { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger); }
+        .pay-btn.active-campuran { background: rgba(59, 130, 246, 0.1); border-color: var(--owner); color: var(--owner); }
 
         .quick-cash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .qc-btn { padding: 8px; background: var(--border); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
@@ -106,6 +109,9 @@
         .owner-btn { padding: 8px 15px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 12px; cursor: pointer; white-space: nowrap;}
         .owner-btn.active { background: var(--owner); border-color: var(--owner); font-weight: bold;}
 
+        /* Scanner Modal */
+        #reader { width: 100%; border-radius: 10px; overflow: hidden; background: #000; margin-bottom: 15px; }
+
         #print-area { display: none; }
         @media print {
             body { background: white; } body * { visibility: hidden; }
@@ -120,6 +126,15 @@
 <body>
 
     <div id="toast-container"></div>
+
+    <!-- Scanner Modal -->
+    <div id="scanner-modal" class="modal-overlay hidden" style="z-index: 10001;">
+        <div class="modal-box" style="padding: 15px;">
+            <h3 style="color: #fff; margin-bottom: 15px;">Pindai Barcode / QR</h3>
+            <div id="reader"></div>
+            <button class="btn-main" style="background: var(--danger);" onclick="closeScanner()">Batal / Tutup</button>
+        </div>
+    </div>
 
     <div id="login-section">
         <div class="login-box">
@@ -186,7 +201,10 @@
                         </div>
                     </div>
                     <div class="panel">
-                        <div class="panel-title">Katalog Produk</div>
+                        <div class="panel-title">
+                            Katalog Produk
+                            <button class="btn-main" style="width: auto; padding: 6px 12px; font-size: 11px; background: var(--owner);" onclick="openScanner()">📷 Pindai Barcode</button>
+                        </div>
                         <div id="dynamic-catalog-container"></div>
                     </div>
                 </div>
@@ -308,6 +326,7 @@
                                 <input type="number" id="cat-tunai" class="form-control" placeholder="Harga Tunai">
                                 <input type="number" id="cat-qris" class="form-control" placeholder="Harga QRIS">
                                 <input type="number" id="cat-vol" class="form-control" placeholder="Vol (BBM Liter)">
+                                <input type="text" id="cat-barcode" class="form-control" placeholder="Barcode ID (Opsional)">
                             </div>
                             <button class="btn-main" style="background: var(--owner); margin-bottom: 15px;" onclick="addDynamicProduct()">+ Tambah Produk</button>
                             <table>
@@ -325,9 +344,10 @@
                 <div class="category-title" style="margin-top: 0;">1. Metode Pembayaran</div>
                 <div class="pay-methods">
                     <button class="pay-btn active-tunai" id="btn-tunai" onclick="setPayMethod('Tunai')">Tunai</button>
-                    <button class="pay-btn" id="btn-qris" onclick="setPayMethod('QRIS')">QRIS/GoPay</button>
+                    <button class="pay-btn" id="btn-qris" onclick="setPayMethod('QRIS')">QRIS</button>
                     <button class="pay-btn" id="btn-debit" onclick="setPayMethod('Debit')">Debit</button>
                     <button class="pay-btn" id="btn-kasbon" onclick="setPayMethod('Kasbon')">Utang Baru</button>
+                    <button class="pay-btn" id="btn-campuran" onclick="setPayMethod('Campuran')" style="grid-column: span 2;">💳 Pembayaran Campuran / Split</button>
                 </div>
 
                 <div class="panel-title" style="margin-top: 15px;">2. Keranjang</div>
@@ -357,6 +377,17 @@
                     <input type="text" id="kasbon-name" class="form-control" placeholder="Nama Peminjam" style="border-color: var(--danger);">
                 </div>
 
+                <!-- Input Khusus Campuran (Split Payment) -->
+                <div id="campuran-input-section" class="hidden" style="background: var(--bg-dark); padding: 12px; border-radius: 10px; border: 1px solid var(--owner); margin-bottom: 15px;">
+                    <label style="font-size: 11px; color: var(--text-muted); font-weight: bold; margin-bottom:8px; display:block;">PENGATURAN SPLIT PAYMENT</label>
+                    <input type="number" id="split-tunai" class="form-control" placeholder="Nominal Uang Tunai Masuk" oninput="calcSplit()" style="margin-bottom: 8px;">
+                    <input type="number" id="split-qris" class="form-control" placeholder="Nominal Scan QRIS" oninput="calcSplit()" style="margin-bottom: 8px;">
+                    <input type="number" id="split-debit" class="form-control" placeholder="Nominal Gesek Debit" oninput="calcSplit()" style="margin-bottom: 8px;">
+                    <input type="number" id="split-kasbon" class="form-control" placeholder="Nominal Di-Utang" oninput="calcSplit()" style="margin-bottom: 8px;">
+                    <input type="text" id="split-kasbon-name" class="form-control hidden" placeholder="Nama Peminjam (Wajib jika ada utang)" style="border-color: var(--danger); margin-bottom: 8px;">
+                    <div style="font-size: 13px; font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);" id="split-status">Kurang: Rp 0</div>
+                </div>
+
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="btn-main" style="flex: 1; padding: 12px; font-size: 13px;" onclick="processCheckout('normal')">🖨 Cetak Struk</button>
                     <button class="btn-main btn-wa" style="flex: 1; padding: 12px; font-size: 13px;" onclick="processCheckout('wa')">📲 WA Struk</button>
@@ -368,8 +399,8 @@
     <!-- MODALS -->
     <div id="digital-modal" class="modal-overlay hidden">
         <div class="modal-box">
-            <h3 style="color: #fff; margin-bottom: 5px;">Pembayaran QRIS</h3>
-            <img src="image_3c69b9.jpg" alt="QRIS" style="width: 100%; max-width: 250px; height: auto; border: 4px solid #fff; border-radius: 12px; margin: 10px auto; background: white; padding: 5px; object-fit: contain;">
+            <h3 style="color: #fff; margin-bottom: 5px;">Pembayaran Lunas</h3>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Pilih LUNAS jika uang sudah masuk ke rekening/QRIS.</div>
             <div style="font-size: 24px; font-weight: 800; color: var(--gopay-color); margin: 15px 0;" id="dm-total">Rp 0</div>
             <button class="btn-main" style="background: var(--gopay-color);" onclick="successDigital()">LUNAS (✔)</button>
             <button class="btn-main" style="background: var(--bg-dark); border: 1px solid var(--border); margin-top: 10px;" onclick="closeModal()">Batal</button>
@@ -403,7 +434,7 @@
         <div class="p-line"></div>
         <div id="p-items"></div>
         <div class="p-line"></div>
-        <div class="p-flex"><span>Metode:</span><span id="p-method" class="p-bold"></span></div>
+        <div class="p-flex"><span>Metode:</span><span id="p-method" class="p-bold" style="font-size: 10px; text-align: right;"></span></div>
         <div id="p-disc-row" class="p-flex hidden"><span style="color:black; font-weight:bold;">Diskon:</span><span id="p-disc" style="color:black; font-weight:bold;"></span></div>
         <div class="p-flex"><span>Total :</span><span id="p-total" class="p-bold"></span></div>
         <div class="p-flex" id="p-pay-row"><span>Bayar :</span><span id="p-pay"></span></div>
@@ -428,16 +459,16 @@
         let session = { active: false };
 
         const defaultCatalog = [
-            { id: 'p05', name: 'Pertalite 0.5L', priceTunai: 7000, priceQris: 8000, cat: 'BBM Pertalite', vol: 0.5 },
-            { id: 'p10', name: 'Pertalite 1L', priceTunai: 13000, priceQris: 14000, cat: 'BBM Pertalite', vol: 1 },
-            { id: 'm05', name: 'Pertamax 0.5L', priceTunai: 10000, priceQris: 11000, cat: 'BBM Pertamax', vol: 0.5 },
-            { id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1 }
+            { id: 'p05', name: 'Pertalite 0.5L', priceTunai: 7000, priceQris: 8000, cat: 'BBM Pertalite', vol: 0.5, barcode: '8991230005' },
+            { id: 'p10', name: 'Pertalite 1L', priceTunai: 13000, priceQris: 14000, cat: 'BBM Pertalite', vol: 1, barcode: '8991230010' },
+            { id: 'm05', name: 'Pertamax 0.5L', priceTunai: 10000, priceQris: 11000, cat: 'BBM Pertamax', vol: 0.5, barcode: '8991240005' },
+            { id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1, barcode: '8991240010' }
         ];
 
         function formatRp(num) { return 'Rp ' + num.toLocaleString('id-ID'); }
         function showToast(msg, type = 'success') {
             const c = document.getElementById('toast-container'); const t = document.createElement('div');
-            t.className = `toast ${type}`; t.innerHTML = `<span>${type === 'success' ? '✔' : (type === 'info' ? 'ℹ' : '✖')} ${msg}</span>`;
+            t.className = `toast ${type}`; t.innerHTML = `<span>${type === 'success' ? '✔' : (type === 'info' ? 'ℹ' : '✖')}${msg}</span>`;
             c.appendChild(t); setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
         }
 
@@ -450,7 +481,6 @@
                     activeBranch = session.branch;
                     loadBranchDB(activeBranch);
                     
-                    // Pastikan variabel sesi baru terinisialisasi jika session lama
                     if(session.stats.pengeluaran === undefined) session.stats.pengeluaran = 0;
                     if(session.pengeluaranList === undefined) session.pengeluaranList = [];
 
@@ -477,17 +507,11 @@
             let saved = localStorage.getItem(dbName);
             if(saved) {
                 masterDB = JSON.parse(saved);
-                
-                // SKRIP AUTO-UPDATE KATALOG & STOK (Migrasi)
-                if(masterDB.catalog.some(p => p.id === 'g01')) {
-                    masterDB.catalog = masterDB.catalog.filter(p => p.id !== 'g01');
-                }
-                if(!masterDB.catalog.some(p => p.id === 'm10')) {
-                    masterDB.catalog.push({ id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1 });
-                }
+                if(masterDB.catalog.some(p => p.id === 'g01')) masterDB.catalog = masterDB.catalog.filter(p => p.id !== 'g01');
+                if(!masterDB.catalog.some(p => p.id === 'm10')) masterDB.catalog.push({ id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1, barcode: '' });
                 if(masterDB.stokGalon === undefined) masterDB.stokGalon = 15;
                 if(masterDB.pengeluaranHistory === undefined) masterDB.pengeluaranHistory = [];
-                
+                masterDB.catalog = masterDB.catalog.map(p => ({...p, barcode: p.barcode || ''}));
             }
             else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15, pengeluaranHistory: [] };
         }
@@ -546,21 +570,44 @@
             if(viewId === 'pengeluaran') updatePengeluaranUI();
         }
 
-        // --- INVENTORY ---
-        function updateStockUI() {
-            const elGalon = document.getElementById('s-galon'); 
-            const elBotol = document.getElementById('s-botol');
-            
-            if(elGalon) {
-                elGalon.innerText = masterDB.stokGalon;
-                if(masterDB.stokGalon < 5) elGalon.classList.add('low-stock'); else elGalon.classList.remove('low-stock');
-            }
-            if(elBotol) {
-                elBotol.innerText = masterDB.stokBotol;
-                if(masterDB.stokBotol < 5) elBotol.classList.add('low-stock'); else elBotol.classList.remove('low-stock');
+        // --- BARCODE SCANNER ---
+        let html5QrcodeScanner = null;
+        function openScanner() {
+            document.getElementById('scanner-modal').classList.remove('hidden');
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 }, false);
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
             }
         }
-        
+        function closeScanner() {
+            document.getElementById('scanner-modal').classList.add('hidden');
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+            }
+        }
+        function onScanSuccess(decodedText, decodedResult) {
+            closeScanner();
+            const prod = masterDB.catalog.find(p => p.barcode === decodedText || p.id === decodedText);
+            if(prod) { 
+                addCart(prod.id); 
+                showToast(prod.name + ' ditambahkan dari Barcode!'); 
+            } else if (decodedText.length >= 10 && (decodedText.startsWith('08') || decodedText.startsWith('62'))) {
+                document.getElementById('cust-phone').value = decodedText;
+                checkPoin();
+                showToast("Nomor pelanggan terscan!");
+            } else {
+                showToast("Barcode tidak dikenali sistem!", "error");
+            }
+        }
+        function onScanFailure(error) { /* Ignore background errors */ }
+
+        // --- INVENTORY ---
+        function updateStockUI() {
+            const elGalon = document.getElementById('s-galon'); const elBotol = document.getElementById('s-botol');
+            if(elGalon) { elGalon.innerText = masterDB.stokGalon; if(masterDB.stokGalon < 5) elGalon.classList.add('low-stock'); else elGalon.classList.remove('low-stock'); }
+            if(elBotol) { elBotol.innerText = masterDB.stokBotol; if(masterDB.stokBotol < 5) elBotol.classList.add('low-stock'); else elBotol.classList.remove('low-stock'); }
+        }
         function updStock(type, val) {
             if (type === 'galon') masterDB.stokGalon = Math.max(0, masterDB.stokGalon + val);
             if (type === 'botol') masterDB.stokBotol = Math.max(0, masterDB.stokBotol + val);
@@ -568,7 +615,7 @@
         }
 
         // --- CART ---
-        function getCurrentPrice(i) { return (session.method === 'Tunai' || session.method === 'Kasbon') ? i.priceTunai : i.priceQris; }
+        function getCurrentPrice(i) { return (session.method === 'QRIS' || session.method === 'Debit') ? i.priceQris : i.priceTunai; } // Harga campuran ikut Tunai default
         function addCart(id) { const e = session.cart.find(c => c.id === id); if (e) e.qty++; else session.cart.push({ ...masterDB.catalog.find(p => p.id === id), qty: 1 }); updateCartUI(); }
         function changeQty(id, delta) { const i = session.cart.find(c => c.id === id); if (!i) return; i.qty += delta; if (i.qty <= 0) session.cart = session.cart.filter(c => c.id !== id); updateCartUI(); }
         
@@ -579,24 +626,50 @@
             let total = subtotal - session.discount;
 
             list.innerHTML = session.cart.length === 0 ? `<div style="text-align: center; color: var(--text-muted); padding: 10px;">Kosong</div>` : session.cart.map(c => `
-                <div class="cart-item"><div class="cart-info"><span class="cart-name">${c.name}</span><span style="color:var(--accent); font-size:12px;">${formatRp(getCurrentPrice(c))} x ${c.qty}</span></div>
+                <div class="cart-item"><div class="cart-info"><span class="cart-name">${c.name}</span><span style="color:var(--accent); font-size:12px;">${formatRp(getCurrentPrice(c))} x${c.qty}</span></div>
                 <div class="cart-controls"><button class="qty-btn" onclick="changeQty('${c.id}', -1)">-</button><span style="font-weight:bold; font-size:14px; width:20px; text-align:center;">${c.qty}</span><button class="qty-btn" onclick="changeQty('${c.id}', 1)">+</button></div></div>`).join('');
             
             const elDisc = document.getElementById('discount-info');
             if(session.discount > 0) { elDisc.classList.remove('hidden'); elDisc.innerText = `Diskon Poin: -${formatRp(session.discount)}`; } else { elDisc.classList.add('hidden'); }
-            document.getElementById('cart-total').innerText = formatRp(total); calcChange(); saveSession(); checkPoin();
+            document.getElementById('cart-total').innerText = formatRp(total); calcChange(); calcSplit(); saveSession(); checkPoin();
         }
 
         function setPayMethod(m) {
             session.method = m; document.querySelectorAll('.pay-btn').forEach(b => b.className = 'pay-btn');
             const act = document.getElementById(`btn-${m.toLowerCase()}`);
-            if(m === 'Tunai') act.classList.add('active-tunai'); else if(m === 'Kasbon') act.classList.add('active-kasbon'); else act.classList.add('active-qris');
+            if(m === 'Tunai') act.classList.add('active-tunai'); else if(m === 'Kasbon') act.classList.add('active-kasbon'); else if(m === 'Campuran') act.classList.add('active-campuran'); else act.classList.add('active-qris');
+            
             document.getElementById('cash-input-section').classList.toggle('hidden', m !== 'Tunai');
             document.getElementById('kasbon-input-section').classList.toggle('hidden', m !== 'Kasbon');
+            document.getElementById('campuran-input-section').classList.toggle('hidden', m !== 'Campuran');
             updateCartUI();
         }
         function quickCash(val) { const tot = session.cart.reduce((s, i) => s + (getCurrentPrice(i) * i.qty), 0) - session.discount; document.getElementById('cash-amount').value = (val === 'pas') ? tot : val; calcChange(); }
         function calcChange() { const tot = session.cart.reduce((s, i) => s + (getCurrentPrice(i) * i.qty), 0) - session.discount; const c = parseInt(document.getElementById('cash-amount').value) || 0; const d = document.getElementById('change-amount'); if (c - tot < 0) { d.style.color = 'var(--danger)'; d.innerText = "Uang Kurang!"; } else { d.style.color = 'var(--warning)'; d.innerText = `Kembali: ${formatRp(c - tot)}`; } }
+        function calcSplit() {
+            if(session.method !== 'Campuran') return;
+            const tot = session.cart.reduce((s, i) => s + (getCurrentPrice(i) * i.qty), 0) - session.discount;
+            const t = parseInt(document.getElementById('split-tunai').value) || 0;
+            const q = parseInt(document.getElementById('split-qris').value) || 0;
+            const d = parseInt(document.getElementById('split-debit').value) || 0;
+            const k = parseInt(document.getElementById('split-kasbon').value) || 0;
+            
+            const nameInput = document.getElementById('split-kasbon-name');
+            if (k > 0) nameInput.classList.remove('hidden'); else nameInput.classList.add('hidden');
+
+            const totalBayar = t + q + d + k;
+            const status = document.getElementById('split-status');
+            
+            if (totalBayar < tot) {
+                status.style.color = 'var(--danger)'; status.innerText = `Kurang Pembayaran: ${formatRp(tot - totalBayar)}`;
+            } else if (totalBayar === tot) {
+                status.style.color = 'var(--primary)'; status.innerText = `Uang Pas! (Sisa: Rp 0)`;
+            } else {
+                let kembali = t - (tot - (q + d + k)); // Kembalian diambil dari tunai
+                if(kembali < 0) kembali = 0; // Jaga-jaga logika aneh
+                status.style.color = 'var(--warning)'; status.innerText = `Kembali (Tunai): ${formatRp(kembali)}`;
+            }
+        }
 
         // --- POIN ---
         function checkPoin() {
@@ -608,71 +681,35 @@
         }
         function redeemPoin() { const phone = document.getElementById('cust-phone').value.trim(); if(masterDB.customers[phone] >= 100) { masterDB.customers[phone] -= 100; session.discount = 5000; showToast("Poin ditukar! Diskon Rp 5.000 diterapkan."); updateCartUI(); } }
 
-        // --- PENGELUARAN ---
+        // --- PENGELUARAN & PIUTANG ---
         function tambahPengeluaran() {
-            const desc = document.getElementById('out-desc').value.trim();
-            const amount = parseInt(document.getElementById('out-amount').value);
+            const desc = document.getElementById('out-desc').value.trim(); const amount = parseInt(document.getElementById('out-amount').value);
             if(!desc || !amount || amount <= 0) return showToast("Isi keterangan dan nominal pengeluaran dengan benar!", "error");
-            
             const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             const item = { id: Date.now(), time, desc, amount, user: session.user };
-            
-            session.pengeluaranList.push(item);
-            session.stats.pengeluaran += amount;
-            
-            masterDB.pengeluaranHistory.push({...item, date: new Date().toLocaleDateString('id-ID')});
-            
-            saveSession(); saveBranchDB();
-            
-            document.getElementById('out-desc').value = '';
-            document.getElementById('out-amount').value = '';
-            showToast("Pengeluaran berhasil dicatat!");
-            updatePengeluaranUI();
-            updateReportUI();
+            session.pengeluaranList.push(item); session.stats.pengeluaran += amount; masterDB.pengeluaranHistory.push({...item, date: new Date().toLocaleDateString('id-ID')});
+            saveSession(); saveBranchDB(); document.getElementById('out-desc').value = ''; document.getElementById('out-amount').value = ''; showToast("Pengeluaran berhasil dicatat!"); updatePengeluaranUI(); updateReportUI();
         }
-
         function hapusPengeluaran(id) {
             if(!confirm("Batal mencatat pengeluaran ini?")) return;
             const idx = session.pengeluaranList.findIndex(p => p.id === id);
             if(idx > -1) {
-                const amount = session.pengeluaranList[idx].amount;
-                session.pengeluaranList.splice(idx, 1);
-                session.stats.pengeluaran -= amount;
-                
-                masterDB.pengeluaranHistory = masterDB.pengeluaranHistory.filter(p => p.id !== id);
-                
-                saveSession(); saveBranchDB();
-                showToast("Pengeluaran dibatalkan");
-                updatePengeluaranUI();
-                updateReportUI();
+                const amount = session.pengeluaranList[idx].amount; session.pengeluaranList.splice(idx, 1); session.stats.pengeluaran -= amount;
+                masterDB.pengeluaranHistory = masterDB.pengeluaranHistory.filter(p => p.id !== id); saveSession(); saveBranchDB(); showToast("Pengeluaran dibatalkan"); updatePengeluaranUI(); updateReportUI();
             }
         }
-
         function updatePengeluaranUI() {
             const tbody = document.getElementById('pengeluaran-list');
-            if(session.pengeluaranList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-center">Belum ada pengeluaran sesi ini</td></tr>';
-                return;
-            }
-            tbody.innerHTML = session.pengeluaranList.map(p => `
-                <tr>
-                    <td>${p.time}</td>
-                    <td>${p.desc}</td>
-                    <td style="color:var(--danger); font-weight:bold;">${formatRp(p.amount)}</td>
-                    <td><button class="btn-main" style="padding: 4px 8px; font-size:10px; background:var(--bg-dark); border:1px solid var(--border);" onclick="hapusPengeluaran(${p.id})">Batal</button></td>
-                </tr>
-            `).join('');
+            if(session.pengeluaranList.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-center">Belum ada pengeluaran sesi ini</td></tr>'; return; }
+            tbody.innerHTML = session.pengeluaranList.map(p => `<tr><td>${p.time}</td><td>${p.desc}</td><td style="color:var(--danger); font-weight:bold;">${formatRp(p.amount)}</td><td><button class="btn-main" style="padding: 4px 8px; font-size:10px; background:var(--bg-dark); border:1px solid var(--border);" onclick="hapusPengeluaran(${p.id})">Batal</button></td></tr>`).join('');
         }
-
-        // --- PIUTANG ---
         function updatePiutangUI() {
             const tbody = document.getElementById('piutang-list');
             if(masterDB.piutangList.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-center">Tidak ada pelanggan berutang</td></tr>'; return; }
-            tbody.innerHTML = masterDB.piutangList.map(p => `
-                <tr><td>${p.date}</td><td style="font-weight:bold;">${p.name}<br><span style="font-size:10px; font-weight:normal;">${p.phone||''}</span></td><td style="color:var(--danger); font-weight:bold;">${formatRp(p.amount)}</td>
+            tbody.innerHTML = masterDB.piutangList.map(p => `<tr><td>${p.date}</td><td style="font-weight:bold;">${p.name}<br><span style="font-size:10px; font-weight:normal;">${p.phone||''}</span></td><td style="color:var(--danger); font-weight:bold;">${formatRp(p.amount)}</td>
                 <td><button class="btn-main" style="padding: 5px 8px; font-size: 11px; margin-bottom:5px;" onclick="payPiutang(${p.id})">Lunas</button>${p.phone ? `<button class="btn-main btn-wa" style="padding: 5px 8px; font-size: 11px;" onclick="tagihWA(${p.id})">WA</button>` : ''}</td></tr>`).join('');
         }
-        function tagihWA(id) { const item = masterDB.piutangList.find(p => p.id === id); if(item && item.phone) window.open(`https://api.whatsapp.com/send?phone=${item.phone}&text=Halo Bapak/Ibu ${item.name},%0AMengingatkan untuk tagihan kasbon di *Rizqiyya Pertabotol* sejumlah *${formatRp(item.amount)}* pada tanggal ${item.date}.%0A%0ATerima Kasih.`, '_blank'); }
+        function tagihWA(id) { const item = masterDB.piutangList.find(p => p.id === id); if(item && item.phone) window.open(`https://api.whatsapp.com/send?phone=${item.phone}&text=Halo Bapak/Ibu${item.name},%0AMengingatkan untuk tagihan kasbon di *Rizqiyya Pertabotol* sejumlah *${formatRp(item.amount)}* pada tanggal${item.date}.%0A%0ATerima Kasih.`, '_blank'); }
         function payPiutang(id) {
             if(!confirm("Terima uang pelunasan tunai?")) return;
             const idx = masterDB.piutangList.findIndex(p => p.id === id);
@@ -694,72 +731,122 @@
             if (session.method === 'Tunai') {
                 const cash = parseInt(document.getElementById('cash-amount').value) || 0;
                 if (cash < total) return showToast("Uang tunai kurang!", "error");
-                executeTrx(total, cash, phone);
+                executeTrx(total, phone);
             } else if (session.method === 'Kasbon') {
                 const cName = document.getElementById('kasbon-name').value.trim();
                 if(!cName) return showToast("Isi nama peminjam!", "error");
                 if(!phone) return showToast("Wajib isi Nomor WA untuk Utang Baru!", "error");
-                executeTrx(total, 0, phone, cName);
+                executeTrx(total, phone, cName);
+            } else if (session.method === 'Campuran') {
+                const t = parseInt(document.getElementById('split-tunai').value) || 0;
+                const q = parseInt(document.getElementById('split-qris').value) || 0;
+                const d = parseInt(document.getElementById('split-debit').value) || 0;
+                const k = parseInt(document.getElementById('split-kasbon').value) || 0;
+                const kName = document.getElementById('split-kasbon-name').value.trim();
+                
+                if (t + q + d + k < total) return showToast("Total bayaran campuran kurang!", "error");
+                if (k > 0 && !kName) return showToast("Isi nama peminjam utang campuran!", "error");
+                if (k > 0 && !phone) return showToast("Wajib isi Nomor WA untuk Utang!", "error");
+                executeTrx(total, phone, kName);
             } else {
                 document.getElementById('dm-total').innerText = formatRp(total); document.getElementById('digital-modal').classList.remove('hidden');
             }
         }
         function closeModal() { document.getElementById('digital-modal').classList.add('hidden'); }
-        function successDigital() { const phone = document.getElementById('cust-phone').value.trim(); const t = session.cart.reduce((s, i) => s + (getCurrentPrice(i) * i.qty), 0) - session.discount; closeModal(); executeTrx(t, t, phone); }
+        function successDigital() { const phone = document.getElementById('cust-phone').value.trim(); closeModal(); executeTrx(session.cart.reduce((s, i) => s + (getCurrentPrice(i) * i.qty), 0) - session.discount, phone); }
 
-        function executeTrx(total, cash, phone, custName = '') {
+        function executeTrx(total, phone, custName = '') {
             const trxId = Math.floor(100000 + Math.random() * 900000); const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             const sItems = session.cart.map(i => ({...i, finalPrice: getCurrentPrice(i)}));
             
+            // LOGIKA SPLIT PEMBAYARAN (DISTRIBUSI ARUS KAS)
+            let splitData = { tunai: 0, qris: 0, debit: 0, kasbon: 0, change: 0, cash_received: 0 };
+            
+            if (session.method === 'Campuran') {
+                splitData.cash_received = parseInt(document.getElementById('split-tunai').value) || 0;
+                splitData.qris = parseInt(document.getElementById('split-qris').value) || 0;
+                splitData.debit = parseInt(document.getElementById('split-debit').value) || 0;
+                splitData.kasbon = parseInt(document.getElementById('split-kasbon').value) || 0;
+                
+                // Tunai efektif yang masuk sebagai omset tunai (bukan kembalian)
+                const totalNonCash = splitData.qris + splitData.debit + splitData.kasbon;
+                splitData.tunai = total - totalNonCash; // Uang pas
+                splitData.change = splitData.cash_received - splitData.tunai;
+            } else if (session.method === 'Tunai') {
+                splitData.cash_received = parseInt(document.getElementById('cash-amount').value) || 0;
+                splitData.tunai = total;
+                splitData.change = splitData.cash_received - total;
+            } else if (session.method === 'QRIS') { splitData.qris = total; }
+            else if (session.method === 'Debit') { splitData.debit = total; }
+            else if (session.method === 'Kasbon') { splitData.kasbon = total; }
+
+            // STOK FISIK
             let deductBotolQty = 0; let deductGalonQty = 0; let tLiter = 0;
             sItems.forEach(i => { 
                 tLiter += (parseFloat(i.vol) * i.qty || 0); 
                 if(i.cat.toLowerCase().includes('bbm')) deductBotolQty += i.qty;
                 if(i.cat.toLowerCase().includes('galon')) deductGalonQty += i.qty;
             });
-
             masterDB.totalOmset += total; masterDB.totalLiter += tLiter;
-            if(phone) masterDB.customers[phone] = (masterDB.customers[phone] || 0) + session.cart.reduce((s, i) => s + i.qty, 0); 
-            if(session.method === 'Kasbon') masterDB.piutangList.push({ id: Date.now(), name: custName, phone: phone, amount: total, date: new Date().toLocaleDateString('id-ID') });
-
-            const trx = { id: trxId, time, method: session.method, total, cash, change: cash - total, items: sItems, customerName: custName, phone, discount: session.discount };
-            session.history.push(trx); 
-            
             masterDB.stokBotol = Math.max(0, masterDB.stokBotol - deductBotolQty); 
             masterDB.stokGalon = Math.max(0, masterDB.stokGalon - deductGalonQty);
-            updateStockUI();
+
+            // POIN & KASBON PENCATATAN
+            if(phone) masterDB.customers[phone] = (masterDB.customers[phone] || 0) + session.cart.reduce((s, i) => s + i.qty, 0); 
+            if(splitData.kasbon > 0) masterDB.piutangList.push({ id: Date.now(), name: custName, phone: phone, amount: splitData.kasbon, date: new Date().toLocaleDateString('id-ID') });
+
+            const trx = { id: trxId, time, method: session.method, total, split: splitData, items: sItems, customerName: custName, phone, discount: session.discount };
+            session.history.push(trx); 
             
-            if(session.method === 'Kasbon') session.stats.kasbon += total;
-            if(session.method === 'Tunai') session.stats.omset_tunai += total;
-            if(session.method === 'QRIS') session.stats.qris += total;
-            if(session.method === 'Debit') session.stats.debit += total;
-            saveBranchDB(); saveSession();
+            // STATS Sesi ini (Pemecahan Omset)
+            session.stats.tunai = (session.stats.tunai || 0) + splitData.tunai; // Migrasi agar tidak rancu
+            session.stats.omset_tunai = (session.stats.omset_tunai || 0) + splitData.tunai;
+            session.stats.qris += splitData.qris;
+            session.stats.debit += splitData.debit;
+            session.stats.kasbon += splitData.kasbon;
             
+            saveBranchDB(); saveSession(); updateStockUI();
+            
+            // TEKS STRUK CAMPURAN
+            let textSplitMethod = session.method === 'Campuran' ? `Campuran (T:${formatRp(splitData.tunai)} Q:${formatRp(splitData.qris)} D:${formatRp(splitData.debit)} K:${formatRp(splitData.kasbon)})` : session.method;
+            let finalMethodStr = session.method === 'Campuran' ? textSplitMethod : session.method;
+
             if (printMode === 'wa') {
                 let targetWA = phone ? phone : "6285701994169";
-                
-                let textItems = sItems.map(i => `• ${i.name} (${i.qty}x) = ${formatRp(i.finalPrice*i.qty)}`).join('%0A');
+                let textItems = sItems.map(i => `• ${i.name} (${i.qty}x) =${formatRp(i.finalPrice*i.qty)}`).join('%0A');
                 let textDisc = session.discount > 0 ? `%0A• Diskon Poin: -${formatRp(session.discount)}` : '';
-                let msg = `*STRUK RIZQIYYA PERTABOTOL*%0ACabang: ${activeBranch}%0ATgl: ${new Date().toLocaleDateString('id-ID')} ${time}%0ANo: ${trxId}%0A%0A${textItems}${textDisc}%0A%0A*TOTAL: ${formatRp(total)}*%0AMetode: ${session.method}%0A%0ATerima Kasih!`;
+                
+                let textSplit = (session.method === 'Campuran') ? `%0A%0A*Rincian Pembayaran:*%0A- Tunai: ${formatRp(splitData.tunai)}\%0A- QRIS:${formatRp(splitData.qris)}%0A- Debit: ${formatRp(splitData.debit)}\%0A- Utang Kasbon:${formatRp(splitData.kasbon)}` : '';
+
+                let msg = `*STRUK RIZQIYYA PERTABOTOL*%0ACabang: ${activeBranch}%0ATgl: ${new Date().toLocaleDateString('id-ID')}${time}%0ANo: ${trxId}\%0A\%0A${textItems}${textDisc}\%0A\%0A*TOTAL:${formatRp(total)}*%0AMetode: ${session.method}${textSplit}%0A%0ATerima Kasih!`;
                 
                 window.open(`https://api.whatsapp.com/send?phone=${targetWA}&text=${msg}`, '_blank');
-                
-                if(!phone) {
-                    showToast("Nomor kosong! Struk otomatis dikirim ke WA Owner.", "info");
-                }
+                if(!phone) showToast("Nomor kosong! Struk otomatis dikirim ke WA Owner.", "info");
             } else {
                 document.getElementById('p-date').innerText = new Date().toLocaleDateString('id-ID') + ' ' + time;
                 document.getElementById('p-trx').innerText = trxId; document.getElementById('p-cashier').innerText = session.user;
-                if(session.method === 'Kasbon') { document.getElementById('p-cust-row').classList.remove('hidden'); document.getElementById('p-cust').innerText = custName; document.getElementById('p-pay-row').classList.add('hidden'); document.getElementById('p-change-row').classList.add('hidden'); } 
-                else { document.getElementById('p-cust-row').classList.add('hidden'); document.getElementById('p-pay-row').classList.remove('hidden'); document.getElementById('p-change-row').classList.remove('hidden'); }
+                if(splitData.kasbon > 0) { document.getElementById('p-cust-row').classList.remove('hidden'); document.getElementById('p-cust').innerText = custName; } 
+                else { document.getElementById('p-cust-row').classList.add('hidden'); }
+                
                 document.getElementById('p-items').innerHTML = trx.items.map(i => `<div class="p-flex"><span style="width:45%;">${i.name}</span><span style="width:15%; text-align:center;">${i.qty}</span><span style="width:40%; text-align:right;">${(i.finalPrice*i.qty).toLocaleString('id-ID')}</span></div>`).join('');
-                document.getElementById('p-method').innerText = trx.method; 
+                document.getElementById('p-method').innerText = finalMethodStr; 
+                
                 if(session.discount > 0) { document.getElementById('p-disc-row').classList.remove('hidden'); document.getElementById('p-disc').innerText = `-${session.discount.toLocaleString('id-ID')}`; } else { document.getElementById('p-disc-row').classList.add('hidden'); }
-                document.getElementById('p-total').innerText = total.toLocaleString('id-ID'); document.getElementById('p-pay').innerText = cash.toLocaleString('id-ID'); document.getElementById('p-change').innerText = trx.change.toLocaleString('id-ID');
+                document.getElementById('p-total').innerText = total.toLocaleString('id-ID'); 
+                
+                if(session.method === 'Kasbon') {
+                    document.getElementById('p-pay-row').classList.add('hidden'); document.getElementById('p-change-row').classList.add('hidden');
+                } else {
+                    document.getElementById('p-pay-row').classList.remove('hidden'); document.getElementById('p-change-row').classList.remove('hidden');
+                    document.getElementById('p-pay').innerText = (splitData.cash_received > 0 ? splitData.cash_received : splitData.tunai + splitData.qris + splitData.debit).toLocaleString('id-ID'); 
+                    document.getElementById('p-change').innerText = splitData.change.toLocaleString('id-ID');
+                }
                 setTimeout(() => window.print(), 500);
             }
             
             session.cart = []; session.discount = 0; document.getElementById('cash-amount').value = ''; document.getElementById('cust-phone').value = ''; document.getElementById('kasbon-name').value = '';
+            document.getElementById('split-tunai').value = ''; document.getElementById('split-qris').value = ''; document.getElementById('split-debit').value = ''; document.getElementById('split-kasbon').value = ''; document.getElementById('split-kasbon-name').value = '';
+            document.getElementById('split-status').innerText = 'Kurang: Rp 0';
             updateCartUI(); updatePiutangUI();
         }
 
@@ -771,78 +858,52 @@
                 closePinModal(); switchView('owner', document.querySelector('.owner-tab')); renderOwnerDash();
             } else { showToast("PIN Owner Salah!", "error"); }
         }
-
         function switchOwnerTab(tabId, el) {
             document.querySelectorAll('.owner-btn').forEach(b => b.classList.remove('active')); el.classList.add('active');
             document.querySelectorAll('.ow-section').forEach(s => s.classList.add('hidden'));
             document.getElementById(tabId).classList.remove('hidden');
         }
-
         function renderOwnerDash() {
-            // Analitik
-            document.getElementById('ow-omset-val').innerText = formatRp(masterDB.totalOmset); 
-            document.getElementById('ow-liter-val').innerText = masterDB.totalLiter + " Liter";
-            
-            // Katalog
-            document.getElementById('owner-catalog-list').innerHTML = masterDB.catalog.map(p => `<tr><td>${p.cat}</td><td>${p.name}</td><td>${formatRp(p.priceTunai)}</td>
+            document.getElementById('ow-omset-val').innerText = formatRp(masterDB.totalOmset); document.getElementById('ow-liter-val').innerText = masterDB.totalLiter + " Liter";
+            document.getElementById('owner-catalog-list').innerHTML = masterDB.catalog.map(p => `<tr><td>${p.cat}</td><td>${p.name}<br><span style="font-size:9px; color:var(--text-muted)">${p.barcode ? '#'+p.barcode : ''}</span></td><td>${formatRp(p.priceTunai)}</td>
                 <td><button class="btn-main" style="padding: 4px; font-size:10px; background:var(--danger);" onclick="deleteProduct('${p.id}')">Hapus</button></td></tr>`).join('');
-
-            // CRM
-            let crmHtml = '';
-            for (const [phone, points] of Object.entries(masterDB.customers)) {
-                crmHtml += `<tr><td>${phone}</td><td style="color:var(--owner); font-weight:bold;">${points} Poin</td>
-                <td><button class="btn-main btn-wa" style="padding: 4px; font-size:10px;" onclick="broadcastPromo('${phone}')">Kirim Promo</button></td></tr>`;
-            }
+            
+            let crmHtml = ''; for (const [phone, points] of Object.entries(masterDB.customers)) { crmHtml += `<tr><td>${phone}</td><td style="color:var(--owner); font-weight:bold;">${points} Poin</td><td><button class="btn-main btn-wa" style="padding: 4px; font-size:10px;" onclick="broadcastPromo('${phone}')">Promo WA</button></td></tr>`; }
             document.getElementById('crm-list').innerHTML = crmHtml === '' ? '<tr><td colspan="3" class="p-center">Belum ada data pelanggan</td></tr>' : crmHtml;
-
-            // Kasir
-            document.getElementById('kasir-list').innerHTML = globalDB.cashiers.map((c, i) => `<tr><td>${c.name}</td><td>${c.pin}</td>
-                <td><button class="btn-main" style="padding: 4px; font-size:10px; background:var(--danger);" onclick="delKasir(${i})">Hapus</button></td></tr>`).join('');
+            document.getElementById('kasir-list').innerHTML = globalDB.cashiers.map((c, i) => `<tr><td>${c.name}</td><td>${c.pin}</td><td><button class="btn-main" style="padding: 4px; font-size:10px; background:var(--danger);" onclick="delKasir(${i})">Hapus</button></td></tr>`).join('');
         }
 
-        // KATALOG FNs
         function addDynamicProduct() {
             const name = document.getElementById('cat-name').value.trim(); const cat = document.getElementById('cat-kategori').value.trim();
             const pTunai = parseInt(document.getElementById('cat-tunai').value); const pQris = parseInt(document.getElementById('cat-qris').value);
-            const vol = parseFloat(document.getElementById('cat-vol').value) || 0;
+            const vol = parseFloat(document.getElementById('cat-vol').value) || 0; const barcode = document.getElementById('cat-barcode').value.trim();
             if(!name || !cat || !pTunai || !pQris) return showToast("Data Produk Belum Lengkap!", "error");
-            masterDB.catalog.push({ id: 'dyn_'+Date.now(), name, cat, priceTunai: pTunai, priceQris: pQris, vol });
+            masterDB.catalog.push({ id: 'dyn_'+Date.now(), name, cat, priceTunai: pTunai, priceQris: pQris, vol, barcode });
             saveBranchDB(); showToast("Produk ditambahkan!"); renderOwnerDash(); initApp();
-            document.getElementById('cat-name').value = ''; document.getElementById('cat-kategori').value = ''; document.getElementById('cat-tunai').value = ''; document.getElementById('cat-qris').value = ''; document.getElementById('cat-vol').value = '';
+            document.getElementById('cat-name').value = ''; document.getElementById('cat-kategori').value = ''; document.getElementById('cat-tunai').value = ''; document.getElementById('cat-qris').value = ''; document.getElementById('cat-vol').value = ''; document.getElementById('cat-barcode').value = '';
         }
         function deleteProduct(id) { if(confirm("Hapus produk ini dari toko?")) { masterDB.catalog = masterDB.catalog.filter(p => p.id !== id); saveBranchDB(); renderOwnerDash(); initApp(); showToast("Produk Dihapus"); } }
         
-        // KASIR FNs
         function addKasir() {
             const n = document.getElementById('new-kasir-name').value.trim(); const p = document.getElementById('new-kasir-pin').value.trim();
             if(!n || !p) return showToast("Nama dan PIN harus diisi", "error");
             globalDB.cashiers.push({name: n, pin: p}); saveGlobalDB(); showToast("Kasir ditambah!");
             document.getElementById('new-kasir-name').value=''; document.getElementById('new-kasir-pin').value=''; renderOwnerDash();
         }
-        function delKasir(idx) {
-            if(confirm("Hapus data kasir ini?")) { globalDB.cashiers.splice(idx, 1); saveGlobalDB(); renderOwnerDash(); showToast("Kasir Dihapus"); }
-        }
+        function delKasir(idx) { if(confirm("Hapus data kasir ini?")) { globalDB.cashiers.splice(idx, 1); saveGlobalDB(); renderOwnerDash(); showToast("Kasir Dihapus"); } }
 
-        // CRM FNs
-        function broadcastPromo(phone) {
-            const msg = `Halo Pelanggan Setia *Rizqiyya Pertabotol*!%0AKami ada promo diskon khusus untuk Anda hari ini. Tunjukkan pesan ini ke kasir untuk menukar poin/klaim diskon.%0ATerima Kasih!`;
-            window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${msg}`, '_blank');
-        }
+        function broadcastPromo(phone) { window.open(`https://api.whatsapp.com/send?phone=${phone}&text=Halo Pelanggan Setia *Rizqiyya Pertabotol*!%0AKami ada promo diskon khusus untuk Anda hari ini. Tunjukkan pesan ini ke kasir untuk menukar poin/klaim diskon.%0ATerima Kasih!`, '_blank'); }
 
-        // EXPORT & RESET
         function saveWebhook() { globalDB.webhookUrl = document.getElementById('webhook-url').value.trim(); saveGlobalDB(); showToast("Webhook Cloud Disimpan!"); }
         
         function exportCSV() {
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += "TANGGAL SHIFT,OMSET HARIAN\n";
             masterDB.shiftHistory.forEach(h => { csvContent += `${h.date},${h.omset}\n`; });
-            
             csvContent += "\nRIWAYAT PENGELUARAN TOKO\nTgl,Keterangan,Nominal\n";
-            masterDB.pengeluaranHistory.forEach(p => { csvContent += `${p.date} ${p.time},${p.desc},${p.amount}\n`; });
-
+            masterDB.pengeluaranHistory.forEach(p => { csvContent += `${p.date}${p.time},${p.desc},${p.amount}\n`; });
             csvContent += "\nDAFTAR PIUTANG (KASBON)\nNama,No WA,Total Utang\n";
-            masterDB.piutangList.forEach(p => { csvContent += `${p.name},${p.phone||'-'},${p.amount}\n`; });
-            
+            masterDB.piutangList.forEach(p => { csvContent += `${p.name},${p.phone\vert{}\vert{}'-'},${p.amount}\n`; });
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", `Laporan_Rizqiyya_${activeBranch}_${new Date().toLocaleDateString('id-ID')}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast("Mengunduh Laporan CSV...");
         }
@@ -864,8 +925,8 @@
             if(session.history.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="p-center">Belum ada transaksi</td></tr>';
             else tbody.innerHTML = [...session.history].reverse().map(t => {
                 let badge = t.method === 'Kasbon' ? 'var(--warning)' : (t.method === 'Pelunasan' ? 'var(--primary)' : 'var(--accent)');
-                let extra = t.method === 'Kasbon' || t.method === 'Pelunasan' ? `<br><span style="font-size:10px; color:var(--text-muted);">${t.customerName}</span>` : '';
-                return `<tr><td>${t.time}</td><td><span style="color:${badge}; font-size:11px; font-weight:bold;">${t.method}</span>${extra}</td><td style="font-weight:bold;">${formatRp(t.total)}</td></tr>`;
+                let extra = t.method === 'Kasbon' || t.method === 'Pelunasan' || t.method === 'Campuran' ? `<br><span style="font-size:10px; color:var(--text-muted);">${t.method === 'Campuran' ? 'Metode Campuran' : t.customerName}</span>` : '';
+                return `<tr><td>${t.time}</td><td><span style="color:${badge}; font-size:11px; font-weight:bold;">${t.method === 'Campuran'?'SPLIT':t.method}</span>${extra}</td><td style="font-weight:bold;">${formatRp(t.total)}</td></tr>`;
             }).join('');
         }
 
@@ -881,7 +942,6 @@
                 const sisaUangFisikLaci = totUangMasukLaci - pengeluaran;
                 const now = new Date().toLocaleString('id-ID');
                 
-                // 1. AUTO-BACKUP KE WEBHOOK (GOOGLE SHEETS)
                 if(globalDB.webhookUrl) {
                     try {
                         showToast("Mencadangkan ke Cloud...", "info");
@@ -890,7 +950,6 @@
                     } catch(e) { console.error("Cloud Error", e); }
                 }
                 
-                // 2. KIRIM WA OWNER
                 const msg = `*📊 LAPORAN TUTUP SESI RIZQIYYA PERTABOTOL*
 ============================
 🏢 Cabang: ${activeBranch}
@@ -922,12 +981,7 @@ Sistem POS Otomatis (✔)`;
                 window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${encodeURIComponent(msg)}`, '_blank');
 
                 masterDB.shiftHistory.push({ date: new Date().toLocaleDateString(), omset: totPenjualanHariIni });
-                saveBranchDB();
-                
-                // Bersihkan Sesi
-                session = { active: false }; saveSession(); 
-                
-                setTimeout(() => location.reload(), 2000);
+                saveBranchDB(); session = { active: false }; saveSession(); setTimeout(() => location.reload(), 2000);
             }
         }
     </script>
