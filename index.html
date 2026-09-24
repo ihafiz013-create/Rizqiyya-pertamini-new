@@ -18,6 +18,7 @@
             --warning: #f59e0b;
             --border: #334155;
             --qris-color: #9333ea;
+            --gopay-color: #00aed6;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
         body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 30px; }
@@ -93,7 +94,7 @@
         .pay-btn.active-tunai { background: rgba(34,197,94,0.1); border-color: var(--accent); color: var(--accent); }
         .pay-btn.active-qris { background: rgba(147, 51, 234, 0.1); border-color: var(--qris-color); color: #c084fc; }
 
-        /* Quick Cash Buttons */
+        /* Quick Cash */
         .quick-cash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .qc-btn { padding: 8px; background: var(--border); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
         .qc-btn:active { background: var(--primary); }
@@ -101,8 +102,11 @@
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-box { background: var(--bg-card); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); }
-        .qris-img { width: 100%; max-width: 250px; height: auto; border: 4px solid var(--qris-color); border-radius: 12px; margin: 15px auto; background: white; padding: 5px; box-shadow: 0 10px 25px rgba(147, 51, 234, 0.3); }
+        .modal-box { background: var(--bg-card); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+        
+        /* QRIS & GoPay specific styling */
+        .gopay-badge { background: rgba(0, 174, 214, 0.15); border: 1px solid var(--gopay-color); color: var(--gopay-color); padding: 8px 15px; border-radius: 10px; font-weight: 800; font-size: 16px; margin: 15px 0; letter-spacing: 1px; display: inline-block; }
+        .qris-img { width: 100%; max-width: 250px; height: auto; border: 4px solid #fff; border-radius: 12px; margin: 10px auto; background: white; padding: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); object-fit: contain; }
         
         /* Tab Navigation */
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -138,7 +142,7 @@
             <img src="Gemini_Generated_Image_7l55pe7l55pe7l55.jfif" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 15px; letter-spacing: 1px;">Rizqiyya Pertabotol</div>
-        <div style="font-size: 12px; color: var(--accent); font-style: italic; margin-top: 5px;">Memuat Harga Dinamis & Sistem QRIS...</div>
+        <div style="font-size: 12px; color: var(--accent); font-style: italic; margin-top: 5px;">Memuat Harga Dinamis & Sistem QRIS GoPay...</div>
     </div>
     <style>@keyframes hideSplash { to { opacity: 0; visibility: hidden; } } @keyframes pulse { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }</style>
 
@@ -231,7 +235,7 @@
                         </div>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                             <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">Tunai: <br><strong style="color:#60a5fa" id="r-tunai">Rp 0</strong></div>
-                            <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">QRIS: <br><strong style="color:#c084fc" id="r-qris">Rp 0</strong></div>
+                            <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">QRIS/GoPay: <br><strong style="color:#c084fc" id="r-qris">Rp 0</strong></div>
                             <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px;">Debit: <br><strong style="color:#fbbf24" id="r-debit">Rp 0</strong></div>
                         </div>
                         
@@ -269,7 +273,7 @@
                 <div class="category-title" style="margin-top: 0;">1. Pilih Metode Pembayaran (Harga Berubah)</div>
                 <div class="pay-methods">
                     <button class="pay-btn active-tunai" id="btn-tunai" onclick="setPayMethod('Tunai')">Uang Tunai</button>
-                    <button class="pay-btn" id="btn-qris" onclick="setPayMethod('QRIS')">QRIS App</button>
+                    <button class="pay-btn" id="btn-qris" onclick="setPayMethod('QRIS')">QRIS / GoPay</button>
                     <button class="pay-btn" id="btn-debit" onclick="setPayMethod('Debit')">Kartu Debit</button>
                 </div>
 
@@ -298,19 +302,24 @@
         </div>
     </div>
 
-    <!-- MODAL PEMBAYARAN DIGITAL -->
+    <!-- MODAL PEMBAYARAN DIGITAL (QRIS & GOPAY) -->
     <div id="digital-modal" class="modal-overlay hidden">
         <div class="modal-box">
-            <h3 style="color: #fff; margin-bottom: 5px;" id="dm-title">Scan QRIS</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Arahkan pelanggan untuk scan barcode</p>
+            <h3 style="color: #fff; margin-bottom: 5px;" id="dm-title">Pembayaran QRIS / GoPay</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Menerima pembayaran dari mana saja</p>
             
-            <div style="background: rgba(147, 51, 234, 0.15); color: #c084fc; padding: 8px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(147, 51, 234, 0.4);" id="dm-status">Menunggu Pembayaran...</div>
+            <div class="gopay-badge" id="gopay-info">
+                GoPay: 6281212345232
+            </div>
+
+            <div style="background: rgba(147, 51, 234, 0.15); color: #c084fc; padding: 8px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(147, 51, 234, 0.4); margin-bottom: 10px;" id="dm-status">Menunggu Scan Barcode...</div>
             
+            <!-- Gambar Barcode Asli QRIS GoPay -->
             <img src="image_3c69b9.jpg" alt="QRIS Barcode" class="qris-img" id="dm-img">
             
-            <div style="font-size: 20px; font-weight: 800; color: #c084fc; margin: 15px 0;" id="dm-total">Rp 0</div>
+            <div style="font-size: 24px; font-weight: 800; color: var(--gopay-color); margin: 15px 0;" id="dm-total">Rp 0</div>
             
-            <button class="btn-main" style="background: #9333ea;" onclick="successDigital()">Konfirmasi Lunas (✔)</button>
+            <button class="btn-main" style="background: var(--gopay-color); color: #fff;" onclick="successDigital()">Konfirmasi Lunas (✔)</button>
             <button class="btn-main" style="background: var(--bg-dark); border: 1px solid var(--border); margin-top: 10px;" onclick="closeModal()">Batal</button>
         </div>
     </div>
@@ -346,7 +355,7 @@
     </div>
 
     <script>
-        // Data Produk Terintegrasi (Dinamis: Harga Tunai & QRIS/Debit)
+        // Data Produk Terintegrasi (Harga Tunai & QRIS/Debit Dinamis Sesuai Instruksi)
         const catalog = [
             { id: 'p05', name: 'Pertalite 0.5L', priceTunai: 7000, priceQris: 8000, cat: 'pertalite', vol: 0.5 },
             { id: 'p10', name: 'Pertalite 1L', priceTunai: 13000, priceQris: 14000, cat: 'pertalite', vol: 1 },
@@ -501,8 +510,7 @@
                 totalBox.classList.add('qris-active');
             }
 
-            // Recalculate cart instantly on payment method switch
-            updateCartUI();
+            updateCartUI(); // Recalculate based on payment method
         }
 
         function quickCash(val) {
@@ -532,9 +540,19 @@
                 if (cash < total) return showToast("Uang tunai kurang dari total!", "error");
                 executeTrx(total, cash);
             } else {
-                document.getElementById('dm-title').innerText = `Verifikasi Pembayaran ${session.method}`;
-                document.getElementById('dm-img').style.display = session.method === 'QRIS' ? 'block' : 'none';
                 document.getElementById('dm-total').innerText = formatRp(total);
+                
+                // Show QRIS GoPay Image only if method is QRIS
+                if(session.method === 'QRIS') {
+                    document.getElementById('dm-img').style.display = 'block';
+                    document.getElementById('gopay-info').style.display = 'inline-block';
+                    document.getElementById('dm-title').innerText = "Pembayaran QRIS / GoPay";
+                } else {
+                    document.getElementById('dm-img').style.display = 'none';
+                    document.getElementById('gopay-info').style.display = 'none';
+                    document.getElementById('dm-title').innerText = "Pembayaran Kartu Debit";
+                }
+
                 document.getElementById('digital-modal').classList.remove('hidden');
             }
         }
@@ -555,7 +573,7 @@
                 executeTrx(total, total);
                 status.style = "";
                 status.className = "status-badge status-waiting";
-                status.innerText = "Menunggu Pembayaran...";
+                status.innerText = "Menunggu Scan Barcode...";
             }, 800);
         }
 
@@ -673,7 +691,7 @@
 *💰 RINGKASAN PENJUALAN:*
 • Modal Awal: ${formatRp(session.modal)}
 • Tunai: ${formatRp(session.stats.tunai)}
-• QRIS: ${formatRp(session.stats.qris)}
+• QRIS/GoPay: ${formatRp(session.stats.qris)}
 • Debit: ${formatRp(session.stats.debit)}
 • *TOTAL OMSET: ${formatRp(session.stats.omset)}*
 ============================
