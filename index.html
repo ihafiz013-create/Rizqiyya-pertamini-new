@@ -3,147 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizqiyya Pertabotol - Executive POS System</title>
+    <title>Rizqiyya Pertabotol - Modern Advanced POS System</title>
     <style>
         :root {
-            --bg-body: #0d1117;
-            --bg-card: #161b22;
-            --border-color: #30363d;
-            --accent-green: #238636;
-            --accent-green-light: #2ea043;
-            --text-main: #c9d1d9;
-            --text-muted: #8b949e;
-            --danger: #da3633;
-            --gold: #d4af37;
+            --bg-base: #090d16;
+            --bg-card: #111827;
+            --border-glow: rgba(34, 197, 94, 0.3);
+            --primary: #15803d;
+            --primary-light: #22c55e;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --danger: #ef4444;
+            --gold: #fbbf24;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; padding-bottom: 40px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background: radial-gradient(circle at top, #0f172a 0%, var(--bg-base) 100%); color: var(--text-main); min-height: 100vh; padding-bottom: 40px; }
 
         .hidden { display: none !important; }
-        .container { max-width: 1300px; margin: 0 auto; padding: 15px; }
+        .container { max-width: 1350px; margin: 0 auto; padding: 20px; }
 
-        /* Animasi Splash Intro */
+        /* Animasi Splash Screen Modern */
         #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040d08;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #030712;
             display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
-            animation: fadeOutSplash 0.8s ease 2.5s forwards;
+            animation: hideSplash 0.7s ease 2.2s forwards;
         }
-        .splash-logo {
-            width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--accent-green-light);
+        .splash-logo-wrap {
+            width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--primary-light);
             background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden;
-            box-shadow: 0 0 30px rgba(46,160,67,0.5); animation: pulseLogo 1.5s infinite alternate;
+            box-shadow: 0 0 40px rgba(34,197,94,0.6); animation: bounceLogo 1.2s infinite alternate;
         }
-        .splash-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .splash-title { font-size: 24px; font-weight: 800; color: #fff; margin-top: 15px; letter-spacing: 1.5px; animation: fadeInText 1s ease 0.3s both; }
-        .splash-subtitle { font-size: 13px; color: var(--accent-green-light); font-style: italic; margin-top: 5px; animation: fadeInText 1s ease 0.6s both; }
-        
-        @keyframes pulseLogo { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
-        @keyframes fadeInText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOutSplash { to { opacity: 0; visibility: hidden; } }
+        .splash-logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .splash-title { font-size: 26px; font-weight: 900; color: #fff; margin-top: 18px; letter-spacing: 1px; }
+        .splash-sub { font-size: 13px; color: var(--primary-light); font-style: italic; margin-top: 6px; }
 
-        /* Halaman Login */
+        @keyframes bounceLogo { 0% { transform: scale(0.9); } 100% { transform: scale(1.08); } }
+        @keyframes hideSplash { to { opacity: 0; visibility: hidden; } }
+
+        /* Halaman Login Modern */
         #login-section {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%); padding: 15px;
+            background: linear-gradient(135deg, #030712 0%, #111827 100%); padding: 20px;
         }
         .login-card {
-            background: var(--bg-card); padding: 35px 25px; border-radius: 8px; border: 1px solid var(--border-color);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7); width: 100%; max-width: 420px; text-align: center;
+            background: var(--bg-card); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--border-glow);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8); width: 100%; max-width: 440px; text-align: center;
         }
-        .login-logo-container {
-            width: 95px; height: 95px; margin: 0 auto 12px auto; border-radius: 50%;
-            border: 2px solid var(--accent-green-light); background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden;
+        .login-logo-box {
+            width: 100px; height: 100px; margin: 0 auto 15px auto; border-radius: 50%;
+            border: 2px solid var(--primary-light); background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden;
+            box-shadow: 0 0 20px rgba(34,197,94,0.3);
         }
-        .login-logo-container img { width: 100%; height: 100%; object-fit: cover; }
-        .logo-title { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 1px; margin-bottom: 4px; }
-        .welcome-quote { font-size: 11px; color: var(--text-muted); font-style: italic; margin-bottom: 20px; line-height: 1.4; }
-        
-        .form-group { margin-bottom: 14px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .form-control { width: 100%; padding: 12px; background: #0d1117; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; color: #fff; }
-        .form-control:focus { outline: none; border-color: var(--accent-green-light); box-shadow: 0 0 8px rgba(46,160,67,0.3); }
-        
-        .btn-system {
-            width: 100%; padding: 14px; background: var(--accent-green); color: #ffffff; border: none; border-radius: 6px; font-size: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;
+        .login-logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .login-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+        .login-desc { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 22px; line-height: 1.5; }
+
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 11px; color: var(--primary-light); text-transform: uppercase; letter-spacing: 1px; }
+        .form-control { width: 100%; padding: 12px 14px; background: #030712; border: 1px solid var(--border-glow); border-radius: 10px; font-size: 14px; color: white; transition: 0.3s; }
+        .form-control:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
+
+        .btn-modern {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); color: #ffffff; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; box-shadow: 0 8px 20px rgba(21,128,61,0.4);
         }
-        .btn-system:hover { background: var(--accent-green-light); }
-        .btn-danger-system { background: var(--danger); }
-        .error-msg { color: #f85149; font-size: 12px; margin-top: 10px; font-weight: 700; }
+        .btn-modern:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(34,197,94,0.5); }
+        .btn-danger-mod { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 8px 20px rgba(239,68,68,0.3); }
+        .error-msg { color: var(--danger); font-size: 12px; margin-top: 10px; font-weight: 700; }
 
         /* Header Utama */
         header {
-            background: var(--bg-card); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+            background: var(--bg-card); padding: 15px 25px; border-radius: 16px; border: 1px solid var(--border-glow);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
-        .header-brand { display: flex; align-items: center; gap: 12px; }
-        .header-logo { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--accent-green-light); object-fit: cover; background: #fff; }
-        .header-left h1 { font-size: 16px; color: #fff; font-weight: 700; }
-        .header-left span { color: var(--text-muted); font-size: 11px; }
-        .header-right { display: flex; align-items: center; gap: 15px; font-size: 12px; }
+        .header-brand { display: flex; align-items: center; gap: 15px; }
+        .header-logo { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--primary-light); object-fit: cover; background: #fff; }
+        .header-left h1 { font-size: 18px; color: #fff; font-weight: 800; }
+        .header-left span { color: var(--primary-light); font-size: 12px; font-weight: 700; }
+        .header-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
 
         /* Dashboard Grid */
-        .dashboard-grid { display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 20px; }
-        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        .dashboard-grid { display: grid; grid-template-columns: 1.7fr 1.3fr; gap: 25px; }
+        @media (max-width: 950px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
-        .card { background: var(--bg-card); padding: 18px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-        .card h3 { margin-bottom: 12px; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: var(--bg-card); padding: 22px; border-radius: 16px; border: 1px solid var(--border-glow); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .card h3 { margin-bottom: 15px; color: #fff; border-bottom: 1px solid var(--border-glow); padding-bottom: 10px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Stock Cards */
-        .stock-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stock-box { background: #0d1117; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; text-align: center; }
-        .stock-box h4 { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
-        .stock-box .count { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-        .stock-controls { display: flex; justify-content: center; gap: 6px; }
-        .stock-controls button { padding: 4px 12px; font-size: 14px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; }
-        .btn-plus { background: var(--accent-green); }
+        .stock-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stock-box { background: #030712; border: 1px solid var(--border-glow); padding: 15px; border-radius: 12px; text-align: center; }
+        .stock-box h4 { font-size: 10px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .stock-box .count { font-size: 26px; font-weight: 800; color: var(--primary-light); margin-bottom: 8px; }
+        .stock-controls { display: flex; justify-content: center; gap: 8px; }
+        .stock-controls button { padding: 6px 14px; font-size: 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; }
+        .btn-plus { background: var(--primary); }
         .btn-minus { background: var(--danger); }
 
         /* Katalog Produk */
-        .product-section-title { font-size: 11px; font-weight: 700; color: var(--accent-green-light); margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--accent-green-light); padding-left: 6px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 8px; }
+        .product-section-title { font-size: 12px; font-weight: 800; color: var(--primary-light); margin: 16px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--primary-light); padding-left: 8px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 10px; }
         .product-item {
-            background: #0d1117; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
+            background: #030712; border: 1px solid var(--border-glow); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; transition: 0.3s;
         }
-        .product-item:hover { border-color: var(--accent-green-light); background: #1f242c; }
-        .product-item h4 { font-size: 11px; margin-bottom: 4px; color: #fff; font-weight: 700; }
-        .product-item .price { font-size: 11px; color: var(--gold); font-weight: 800; margin-bottom: 6px; }
-        .badge-tipe { display: inline-block; font-size: 8px; padding: 2px 6px; border-radius: 4px; color: white; font-weight: 700; text-transform: uppercase; }
-        .badge-tunai { background: #1f6feb; }
-        .badge-qris { background: #8957e5; }
+        .product-item:hover { border-color: var(--primary-light); background: #111c2e; transform: translateY(-3px); }
+        .product-item h4 { font-size: 12px; margin-bottom: 5px; color: #fff; font-weight: 700; }
+        .product-item .price { font-size: 12px; color: var(--gold); font-weight: 800; margin-bottom: 8px; }
+        .badge-tipe { display: inline-block; font-size: 9px; padding: 3px 7px; border-radius: 6px; color: white; font-weight: 800; text-transform: uppercase; }
+        .badge-tunai { background: #2563eb; }
+        .badge-qris { background: #9333ea; }
 
         /* Tables & Cart */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-        table th, table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; }
-        table th { background: #0d1117; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
-        .total-section { font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; margin-bottom: 12px; background: #0d1117; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; color: #fff; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        table th, table td { padding: 10px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        table th { background: #030712; color: var(--primary-light); font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .total-section { font-size: 17px; font-weight: 800; display: flex; justify-content: space-between; margin-bottom: 15px; background: rgba(34,197,94,0.08); border: 1px solid var(--border-glow); padding: 14px; border-radius: 10px; color: var(--primary-light); }
 
         /* QRIS Modal */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(1, 4, 9, 0.85);
-            display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.9);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px); padding: 20px;
         }
         .modal-content {
-            background: var(--bg-card); padding: 25px 20px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; max-width: 380px; text-align: center;
+            background: var(--bg-card); padding: 30px; border-radius: 20px; border: 1px solid var(--border-glow); width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
         }
-        .qris-img { width: 220px; height: auto; border: 2px solid #fff; border-radius: 6px; margin: 12px 0; background: white; padding: 6px; }
-        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
-        .status-waiting { background: rgba(210,153,34,0.15); color: #d29922; border: 1px solid rgba(210,153,34,0.4); }
-        .status-success { background: rgba(46,160,67,0.15); color: #3fb950; border: 1px solid rgba(46,160,67,0.4); }
+        .qris-img { width: 230px; height: auto; border: 3px solid var(--primary-light); border-radius: 12px; margin: 15px 0; background: white; padding: 8px; }
+        .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-waiting { background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.4); }
+        .status-success { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.4); }
 
         /* Tabs */
-        .tabs { display: flex; gap: 6px; margin-bottom: 12px; background: #0d1117; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 700; font-size: 11px; cursor: pointer; border-radius: 4px; color: var(--text-muted); text-transform: uppercase; transition: 0.2s; }
-        .tab-btn.active { background: var(--accent-green); color: #fff; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 18px; background: #030712; padding: 6px; border-radius: 12px; border: 1px solid var(--border-glow); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 800; font-size: 12px; cursor: pointer; border-radius: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .tab-btn.active { background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%); color: #fff; box-shadow: 0 5px 15px rgba(34,197,94,0.4); }
 
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-        .report-card { background: #0d1117; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); border-left: 3px solid var(--accent-green-light); }
-        .report-card.orange { border-left-color: #d29922; }
-        .report-card h4 { font-size: 9px; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; }
-        .report-card .val { font-size: 15px; font-weight: 800; color: #fff; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .report-card { background: #030712; padding: 12px; border-radius: 10px; border: 1px solid var(--border-glow); border-left: 4px solid var(--primary-light); }
+        .report-card.orange { border-left-color: #f59e0b; }
+        .report-card h4 { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        .report-card .val { font-size: 17px; font-weight: 800; color: #fff; }
 
-        .table-responsive { max-height: 240px; overflow-y: auto; }
+        .table-responsive { max-height: 260px; overflow-y: auto; }
+        .table-responsive::-webkit-scrollbar { width: 5px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 4px; }
 
-        /* Area Cetak Struk Thermal */
+        /* Area Cetak Struk Thermal 58mm Anti-Blank */
         #print-receipt-area { display: none; }
         @media print {
             body * { visibility: hidden; }
@@ -152,33 +155,33 @@
                 position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 10px; color: black; background: white; padding: 5px; text-align: left;
             }
             .receipt-logo-print {
-                width: 40px; height: 40px; border-radius: 50%; border: 1px solid #000; margin: 0 auto 4px auto; display: block; object-fit: cover;
+                width: 42px; height: 42px; border-radius: 50%; border: 1px solid #000; margin: 0 auto 4px auto; display: block; object-fit: cover;
             }
             .receipt-center { text-align: center; }
-            .receipt-line { border-bottom: 1px dashed black; margin: 3px 0; }
+            .receipt-line { border-bottom: 1px dashed black; margin: 4px 0; }
             .receipt-flex { display: flex; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== ANIMASI SPLASH INTRO ==================== -->
+    <!-- ==================== ANIMASI SPLASH SCREEN ==================== -->
     <div id="splash-screen">
-        <div class="splash-logo">
-            <img src="image_2.png" alt="Logo" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
+        <div class="splash-logo-wrap">
+            <img src="image_2.png" alt="Logo Rizqiyya" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
         </div>
         <div class="splash-title">Rizqiyya Pertabotol</div>
-        <div class="splash-subtitle">Memuat Sistem Kasir Profesional...</div>
+        <div class="splash-sub">Memuat Sistem Kasir & Cetak Struk Modern...</div>
     </div>
 
     <!-- ==================== HALAMAN LOGIN ==================== -->
     <div id="login-section">
         <div class="login-card">
-            <div class="login-logo-container">
+            <div class="login-logo-box">
                 <img src="image_2.png" alt="Logo Rizqiyya" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
             </div>
-            <div class="logo-title">Rizqiyya Pertabotol</div>
-            <div class="welcome-quote">"Selamat datang di sistem kasir multi-device dan cetak struk handal."</div>
+            <div class="login-title">Rizqiyya Pertabotol</div>
+            <div class="login-desc">"Sistem POS multi-device modern, akurat, dan cetak struk instan."</div>
 
             <div class="form-group">
                 <label for="login-branch">Pilih Cabang Toko</label>
@@ -206,7 +209,7 @@
                 <label for="modal-awal">Modal Awal Kasir (Rp)</label>
                 <input type="number" id="modal-awal" class="form-control" value="100000">
             </div>
-            <button class="btn-system" onclick="handleLogin()">Masuk Shift</button>
+            <button class="btn-modern" onclick="handleLogin()">Masuk Shift Kerja</button>
             <div id="login-error" class="error-msg"></div>
         </div>
     </div>
@@ -222,8 +225,8 @@
                 </div>
             </div>
             <div class="header-right">
-                <div>Modal: <strong id="header-modal" style="color: #fff;">Rp 0</strong></div>
-                <button class="btn-system btn-danger-system" style="padding: 7px 12px; font-size: 10px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & WA</button>
+                <div>Modal: <strong id="header-modal" style="color: var(--primary-light);">Rp 0</strong></div>
+                <button class="btn-modern btn-danger-mod" style="padding: 8px 14px; font-size: 11px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & WA</button>
             </div>
         </header>
 
@@ -264,7 +267,7 @@
             <div>
                 <div class="tabs">
                     <button class="tab-btn active" onclick="switchTab('pos')">Kasir (POS)</button>
-                    <button class="tab-btn" onclick="switchTab('rekap')">Laporan</button>
+                    <button class="tab-btn" onclick="switchTab('rekap')">Laporan Omset</button>
                 </div>
 
                 <div id="tab-pos" class="card">
@@ -287,19 +290,19 @@
                     </div>
 
                     <div class="total-section">
-                        <span>Total:</span>
+                        <span>Total Pembayaran:</span>
                         <span id="cart-total">Rp 0</span>
                     </div>
 
                     <div class="form-group" id="cash-payment-group">
                         <label for="cash-given">Uang Tunai Diterima (Rp)</label>
                         <input type="number" id="cash-given" class="form-control" placeholder="0" oninput="calculateChange()">
-                        <div style="font-size: 11px; margin-top: 4px; font-weight: 700; color: var(--accent-green-light);">
+                        <div style="font-size: 12px; margin-top: 5px; font-weight: 800; color: var(--primary-light);">
                             Kembalian: <span id="change-amount">Rp 0</span>
                         </div>
                     </div>
 
-                    <button class="btn-system" onclick="checkoutProcess()">Proses & Cetak Struk HP</button>
+                    <button class="btn-modern" onclick="checkoutProcess()">Proses & Cetak Struk Otomatis</button>
                 </div>
 
                 <div id="tab-rekap" class="card hidden">
@@ -323,22 +326,22 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 10px; font-size: 11px; background: #0d1117; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Tunai:</span> <strong style="color: #58a6ff;" id="report-tunai">Rp 0</strong></div>
-                        <div style="display: flex; justify-content: space-between;"><span>QRIS:</span> <strong style="color: #bc8cff;" id="report-qris">Rp 0</strong></div>
+                    <div style="margin-bottom: 12px; font-size: 12px; background: #030712; padding: 10px; border-radius: 10px; border: 1px solid var(--border-glow);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Tunai:</span> <strong style="color: #60a5fa;" id="report-tunai">Rp 0</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>QRIS:</span> <strong style="color: #c084fc;" id="report-qris">Rp 0</strong></div>
                     </div>
 
-                    <div style="margin-top: 8px;">
-                        <h4 style="font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Catat Pengeluaran Operasional</h4>
-                        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                    <div style="margin-top: 10px;">
+                        <h4 style="font-size: 11px; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase;">Catat Pengeluaran Operasional</h4>
+                        <div style="display: flex; gap: 6px; margin-bottom: 6px;">
                             <input type="text" id="expense-desc" class="form-control" placeholder="Keterangan" style="flex: 2;">
                             <input type="number" id="expense-amount" class="form-control" placeholder="Nominal" style="flex: 1;">
                         </div>
-                        <button class="btn-system btn-danger-system" style="padding: 7px; font-size: 10px;" onclick="addExpense()">Simpan Pengeluaran</button>
+                        <button class="btn-modern btn-danger-mod" style="padding: 8px; font-size: 11px;" onclick="addExpense()">Simpan Pengeluaran</button>
                     </div>
 
-                    <div style="margin-top: 12px;">
-                        <h4 style="font-size: 10px; margin-bottom: 4px; color: var(--text-muted); text-transform: uppercase;">Riwayat Transaksi</h4>
+                    <div style="margin-top: 15px;">
+                        <h4 style="font-size: 11px; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase;">Riwayat Transaksi</h4>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -362,8 +365,8 @@
     <!-- ==================== MODAL QRIS ==================== -->
     <div id="qris-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 style="color: #fff; margin-bottom: 5px; font-size: 14px;">Scan Pembayaran QRIS</h3>
-            <p style="font-size: 11px; color: var(--text-muted);">Gunakan e-wallet / m-banking untuk scan</p>
+            <h3 style="color: #fff; margin-bottom: 5px; font-size: 15px;">Scan Pembayaran QRIS</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">Gunakan aplikasi e-wallet / m-banking</p>
             
             <div id="qris-status-box" class="status-badge status-waiting">Menunggu Scan...</div>
             
@@ -371,45 +374,45 @@
                 <img src="image.png" alt="QRIS Barcode" class="qris-img" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
             </div>
 
-            <div style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: var(--gold);" id="qris-modal-total">
+            <div style="font-size: 16px; font-weight: 800; margin-bottom: 15px; color: var(--gold);" id="qris-modal-total">
                 Total: Rp 0
             </div>
 
-            <button class="btn-system" id="btn-simulate-qris" onclick="completeQrisPayment()">Simulasi Berhasil (✔)</button>
-            <button class="btn-system btn-danger-system" style="margin-top: 6px;" onclick="closeQrisModal()">Batalkan</button>
+            <button class="btn-modern" id="btn-simulate-qris" onclick="completeQrisPayment()">Simulasi Berhasil (✔)</button>
+            <button class="btn-modern btn-danger-mod" style="margin-top: 8px;" onclick="closeQrisModal()">Batalkan</button>
         </div>
     </div>
 
-    <!-- ==================== AREA CETAK STRUK THERMAL ==================== -->
+    <!-- ==================== AREA CETAK STRUK THERMAL 58mm ==================== -->
     <div id="print-receipt-area">
         <div class="receipt-center">
             <img src="image_2.png" alt="Logo" class="receipt-logo-print" onerror="this.style.display='none'">
-            <strong style="font-size: 10px;">RIZQIYYA PERTABOTOL</strong><br>
-            <span id="receipt-branch" style="font-size: 8px;">Cabang: Toko Rumah</span>
+            <strong style="font-size: 11px;">RIZQIYYA PERTABOTOL</strong><br>
+            <span id="receipt-branch" style="font-size: 9px;">Cabang: Toko Rumah</span>
         </div>
         <div class="receipt-line"></div>
-        <div style="font-size: 8px;">
+        <div style="font-size: 9px;">
             <div>Tanggal : <span id="r-date"></span></div>
             <div>No.Struk: <span id="r-trxid"></span></div>
             <div>Kasir   : <span id="r-cashier"></span></div>
         </div>
         <div class="receipt-line"></div>
-        <div style="font-size: 8px; font-weight: bold; display: flex; justify-content: space-between;">
+        <div style="font-size: 9px; font-weight: bold; display: flex; justify-content: space-between;">
             <span style="width: 48%;">Item</span>
             <span style="width: 15%; text-align: center;">Qty</span>
             <span style="width: 35%; text-align: right;">Total</span>
         </div>
         <div class="receipt-line"></div>
-        <div id="receipt-items-list" style="font-size: 8px; margin-bottom: 2px;"></div>
+        <div id="receipt-items-list" style="font-size: 9px; margin-bottom: 3px;"></div>
         <div class="receipt-line"></div>
-        <div style="font-size: 8px;">
+        <div style="font-size: 9px;">
             <div class="receipt-flex"><span>Metode</span>: <span id="r-method">TUNAI</span></div>
             <div class="receipt-flex"><span>Total</span>: <strong id="r-total">Rp 0</strong></div>
             <div class="receipt-flex"><span>Bayar</span>: <span id="r-cash">Rp 0</span></div>
             <div class="receipt-flex"><span>Kembali</span>: <span id="r-change">Rp 0</span></div>
         </div>
         <div class="receipt-line"></div>
-        <div class="receipt-center" style="font-size: 8px; margin-top: 3px;">
+        <div class="receipt-center" style="font-size: 9px; margin-top: 4px;">
             Terima Kasih atas Kunjungan Anda!<br>Semoga Berkah Selalu.
         </div>
     </div>
@@ -626,7 +629,7 @@
                     <td><span class="badge-tipe ${item.type === 'Tunai' ? 'badge-tunai' : 'badge-qris'}">${item.type}</span></td>
                     <td>${item.qty}</td>
                     <td>Rp ${sub.toLocaleString('id-ID')}</td>
-                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer;">✕</button></td>
+                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:6px; cursor:pointer;">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -752,7 +755,9 @@
             document.getElementById("r-cash").textContent = `Rp ${tx.cash.toLocaleString('id-ID')}`;
             document.getElementById("r-change").textContent = `Rp ${tx.change.toLocaleString('id-ID')}`;
 
-            window.print();
+            setTimeout(() => {
+                window.print();
+            }, 300);
         }
 
         function addExpense() {
