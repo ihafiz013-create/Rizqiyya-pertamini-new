@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizqiyya Pertabotol - Executive POS</title>
+    <title>Rizqiyya Pertabotol - Executive POS System</title>
     <style>
         :root {
             --bg-base: #070b14;
@@ -55,7 +55,7 @@
         .btn-danger-luxury { background: linear-gradient(135deg, #dc2626 100%, #991b1b 100%); color: white; box-shadow: 0 5px 20px rgba(220, 38, 38, 0.3); }
         .error-msg { color: var(--danger); font-size: 12px; margin-top: 10px; font-weight: 700; }
 
-        /* Header Utama dengan Logo */
+        /* Header Utama */
         header {
             background: var(--bg-card); padding: 15px 25px; border-radius: 16px; border: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
@@ -86,14 +86,14 @@
 
         /* Katalog Produk */
         .product-section-title { font-size: 13px; font-weight: 700; color: var(--gold-light); margin: 18px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--gold); padding-left: 10px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
         .product-item {
-            background: #0b0f19; border: 1px solid var(--border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s;
+            background: #0b0f19; border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; transition: 0.3s;
         }
         .product-item:hover { border-color: var(--gold); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25); transform: translateY(-3px); }
-        .product-item h4 { font-size: 13px; margin-bottom: 6px; color: white; font-weight: 600; }
-        .product-item .price { font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
-        .badge-tipe { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 6px; color: white; font-weight: 700; text-transform: uppercase; }
+        .product-item h4 { font-size: 12px; margin-bottom: 6px; color: white; font-weight: 600; }
+        .product-item .price { font-size: 12px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+        .badge-tipe { display: inline-block; font-size: 9px; padding: 3px 6px; border-radius: 6px; color: white; font-weight: 700; text-transform: uppercase; }
         .badge-tunai { background: #2563eb; }
         .badge-qris { background: #9333ea; }
 
@@ -340,7 +340,7 @@
         </div>
     </div>
 
-    <!-- ==================== MODAL VERIFIKASI QRIS (MEMAKAI FOTO QRIS BAHARU) ==================== -->
+    <!-- ==================== MODAL VERIFIKASI QRIS ==================== -->
     <div id="qris-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 style="color: var(--gold); margin-bottom: 5px;">Scan Pembayaran QRIS</h3>
@@ -349,7 +349,7 @@
             <div id="qris-status-box" class="status-badge status-waiting">Menunggu Scan Pelanggan...</div>
             
             <div>
-                <img src="image.png" alt="QRIS Barcode Rizqiyya Baharu" class="qris-img">
+                <img src="image.png" alt="QRIS Barcode Rizqiyya" class="qris-img">
             </div>
 
             <div style="font-size: 18px; font-weight: 800; margin-bottom: 18px; color: var(--gold-light);" id="qris-modal-total">
@@ -361,7 +361,7 @@
         </div>
     </div>
 
-    <!-- ==================== AREA CETAK STRUK THERMAL DENGAN LOGO ==================== -->
+    <!-- ==================== AREA CETAK STRUK THERMAL ==================== -->
     <div id="print-receipt-area">
         <img src="watermarked_img_9890763827945036510.jpg" alt="Logo" class="receipt-logo">
         <div style="font-weight: bold; font-size: 12px;">RIZQIYYA PERTABOTOL</div>
@@ -400,14 +400,21 @@
         };
 
         const products = [
-            { id: 1, name: "Pertalite 1 Liter", price: 13000, type: "Tunai", category: "pertalite" },
-            { id: 2, name: "Pertalite 1 Liter", price: 14000, type: "QRIS", category: "pertalite" },
-            { id: 3, name: "Pertalite 2 Liter", price: 25000, type: "Tunai", category: "pertalite" },
-            { id: 4, name: "Pertalite 2 Liter", price: 26000, type: "QRIS", category: "pertalite" },
-            { id: 5, name: "Pertamax 1 Liter", price: 19000, type: "Tunai", category: "pertamax" },
-            { id: 6, name: "Pertamax 1 Liter", price: 20000, type: "QRIS", category: "pertamax" },
-            { id: 7, name: "Pertamax 2 Liter", price: 38000, type: "Tunai", category: "pertamax" },
-            { id: 8, name: "Pertamax 2 Liter", price: 39000, type: "QRIS", category: "pertamax" },
+            // Pertalite (0,5L, 1L, 2L) - Tunai & QRIS
+            { id: 1, name: "Pertalite 0,5 Liter", price: 7000, type: "Tunai", category: "pertalite" },
+            { id: 2, name: "Pertalite 0,5 Liter", price: 8000, type: "QRIS", category: "pertalite" },
+            { id: 3, name: "Pertalite 1 Liter", price: 13000, type: "Tunai", category: "pertalite" },
+            { id: 4, name: "Pertalite 1 Liter", price: 14000, type: "QRIS", category: "pertalite" },
+            { id: 5, name: "Pertalite 2 Liter", price: 25000, type: "Tunai", category: "pertalite" },
+            { id: 6, name: "Pertalite 2 Liter", price: 26000, type: "QRIS", category: "pertalite" },
+            
+            // Pertamax (0,5L, 1L, 2L) - Tunai & QRIS
+            { id: 7, name: "Pertamax 0,5 Liter", price: 10000, type: "Tunai", category: "pertamax" },
+            { id: 8, name: "Pertamax 0,5 Liter", price: 11000, type: "QRIS", category: "pertamax" },
+            { id: 9, name: "Pertamax 1 Liter", price: 19000, type: "Tunai", category: "pertamax" },
+            { id: 10, name: "Pertamax 1 Liter", price: 20000, type: "QRIS", category: "pertamax" },
+            { id: 11, name: "Pertamax 2 Liter", price: 38000, type: "Tunai", category: "pertamax" },
+            { id: 12, name: "Pertamax 2 Liter", price: 39000, type: "QRIS", category: "pertamax" },
         ];
 
         let currentSession = {
@@ -763,3 +770,4 @@
         }
     </script>
 </body>
+</html>
