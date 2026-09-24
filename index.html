@@ -89,10 +89,11 @@
         .modal-box { background: var(--bg-card); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
         
         .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-item { flex: 1; padding: 12px; text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-weight: 700; color: var(--text-muted); transition: 0.2s; min-width: 120px; font-size: 13px;}
+        .tab-item { flex: 1; padding: 12px; text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-weight: 700; color: var(--text-muted); transition: 0.2s; min-width: 90px; font-size: 12px;}
         .tab-item.active { background: var(--primary); color: white; border-color: var(--primary); }
         .tab-item.owner-tab { border-color: var(--owner); color: var(--owner); }
         .tab-item.owner-tab.active { background: var(--owner); color: white; }
+        .tab-item.danger-tab.active { background: var(--danger); border-color: var(--danger); color: white; }
 
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -122,7 +123,6 @@
 
     <div id="login-section">
         <div class="login-box">
-            <!-- LOGO RIZQIYYA -->
             <div class="login-logo">
                 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e293b' stroke='%2316a34a' stroke-width='4'/%3E%3Cpath d='M30 30c0-5 15-5 15 0v45c0 5-15 5-15 0z' fill='%23fff'/%3E%3Cpath d='M45 35h15c15 0 15 20 0 20h-15' fill='none' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M50 55l15 20' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M75 75q5 10-5 10-10 0-5-10l5-7z' fill='%233b82f6'/%3E%3C/svg%3E" alt="Rizqiyya Logo">
             </div>
@@ -145,7 +145,6 @@
     <div id="app-section" class="hidden">
         <header>
             <div class="header-brand">
-                <!-- LOGO HEADER -->
                 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e293b' stroke='%2316a34a' stroke-width='4'/%3E%3Cpath d='M30 30c0-5 15-5 15 0v45c0 5-15 5-15 0z' fill='%23fff'/%3E%3Cpath d='M45 35h15c15 0 15 20 0 20h-15' fill='none' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M50 55l15 20' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M75 75q5 10-5 10-10 0-5-10l5-7z' fill='%233b82f6'/%3E%3C/svg%3E" alt="Logo">
                 <div>
                     <h1>Rizqiyya Pertabotol</h1>
@@ -163,7 +162,8 @@
                 <div class="nav-tabs">
                     <div class="tab-item active" onclick="switchView('pos', this)">Kasir (POS)</div>
                     <div class="tab-item" onclick="switchView('piutang', this)" style="color:var(--warning); border-color:var(--warning);">Buku Piutang</div>
-                    <div class="tab-item" onclick="switchView('report', this)">Laporan Penjualan</div>
+                    <div class="tab-item danger-tab" onclick="switchView('pengeluaran', this)" style="color:var(--danger); border-color:var(--danger);">Pengeluaran</div>
+                    <div class="tab-item" onclick="switchView('report', this)">Laporan Sesi</div>
                     <div class="tab-item owner-tab" onclick="reqOwnerAccess(this)">Dasbor Owner 🔒</div>
                 </div>
 
@@ -202,7 +202,29 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: LAPORAN -->
+                <!-- VIEW 3: PENGELUARAN -->
+                <div id="view-pengeluaran" class="hidden">
+                    <div class="panel" style="margin-bottom: 20px;">
+                        <div class="panel-title" style="color: var(--danger);">Catat Pengeluaran Toko</div>
+                        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Catat uang keluar dari laci fisik (misal: Beli Kresek, Uang Makan, dll). Akan otomatis memotong perhitungan uang fisik laci di laporan akhir.</p>
+                        
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="out-desc" class="form-control" placeholder="Keterangan (Cth: Beli Kresek)" style="margin-bottom: 0;">
+                            <input type="number" id="out-amount" class="form-control" placeholder="Nominal (Rp)" style="margin-bottom: 0;">
+                        </div>
+                        <button class="btn-main" style="background: var(--danger);" onclick="tambahPengeluaran()">Catat Pengeluaran (-)</button>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-title">Riwayat Pengeluaran Sesi Ini</div>
+                        <table>
+                            <thead><tr><th>Waktu</th><th>Keterangan</th><th>Nominal</th><th>Aksi</th></tr></thead>
+                            <tbody id="pengeluaran-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: LAPORAN -->
                 <div id="view-report" class="hidden">
                     <div class="panel" style="margin-bottom: 20px;">
                         <div class="panel-title">Ringkasan Omset Sesi Ini</div>
@@ -217,13 +239,14 @@
                             <div style="background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; font-size: 12px;">QRIS/Debit: <br><strong style="color:#c084fc; font-size:16px;" id="r-jual-nontunai">Rp 0</strong></div>
                             <div style="background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; font-size: 12px; border: 1px solid var(--warning);">Utang Baru: <br><strong style="color:var(--warning); font-size:16px;" id="r-utang-baru">Rp 0</strong></div>
                             <div style="background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; font-size: 12px; border: 1px solid var(--primary);">Lunas Utang: <br><strong style="color:var(--primary); font-size:16px;" id="r-lunas-utang">Rp 0</strong></div>
+                            <div style="background: #0f172a; padding: 15px; border-radius: 8px; text-align: center; font-size: 12px; border: 1px solid var(--danger); grid-column: span 2;">Total Pengeluaran Toko (Uang Keluar): <br><strong style="color:var(--danger); font-size:18px;" id="r-pengeluaran">Rp 0</strong></div>
                         </div>
                         <div class="panel-title" style="border-top: 1px solid var(--border); padding-top: 15px;">Riwayat Transaksi Terakhir</div>
                         <table><thead><tr><th>Waktu</th><th>Info</th><th>Total</th></tr></thead><tbody id="history-list"></tbody></table>
                     </div>
                 </div>
 
-                <!-- VIEW 4: OWNER (ULTIMATE) -->
+                <!-- VIEW 5: OWNER (ULTIMATE) -->
                 <div id="view-owner" class="hidden">
                     <div class="panel" style="margin-bottom: 20px;">
                         <div class="panel-title" style="color: var(--owner);">Dasbor Manajemen Utama</div>
@@ -427,6 +450,10 @@
                     activeBranch = session.branch;
                     loadBranchDB(activeBranch);
                     
+                    // Pastikan variabel sesi baru terinisialisasi jika session lama
+                    if(session.stats.pengeluaran === undefined) session.stats.pengeluaran = 0;
+                    if(session.pengeluaranList === undefined) session.pengeluaranList = [];
+
                     document.getElementById('login-section').classList.add('hidden');
                     document.getElementById('app-section').classList.remove('hidden');
                     document.getElementById('h-branch').innerText = session.branch; 
@@ -434,7 +461,7 @@
                     document.getElementById('p-branch').innerText = session.branch;
                     document.getElementById('h-user').innerText = `Oleh: ${session.user}`;
                     
-                    updateStockUI(); setPayMethod(session.method); initApp(); updateCartUI(); updatePiutangUI();
+                    updateStockUI(); setPayMethod(session.method); initApp(); updateCartUI(); updatePiutangUI(); updatePengeluaranUI();
                 }
             }
         };
@@ -458,12 +485,11 @@
                 if(!masterDB.catalog.some(p => p.id === 'm10')) {
                     masterDB.catalog.push({ id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1 });
                 }
-                if(masterDB.stokGalon === undefined) {
-                    masterDB.stokGalon = 15; // Beri nilai awal jika sebelumnya sempat terhapus
-                }
+                if(masterDB.stokGalon === undefined) masterDB.stokGalon = 15;
+                if(masterDB.pengeluaranHistory === undefined) masterDB.pengeluaranHistory = [];
                 
             }
-            else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15 };
+            else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15, pengeluaranHistory: [] };
         }
 
         function saveBranchDB() {
@@ -483,7 +509,11 @@
             const cashierObj = globalDB.cashiers.find(c => c.name === user);
             if (cashierObj && cashierObj.pin === pass) {
                 loadBranchDB(activeBranch);
-                session = { active: true, branch: activeBranch, user: user, cart: [], method: 'Tunai', history: [], loginTime: new Date().toLocaleString('id-ID'), discount: 0, stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0 } };
+                session = { 
+                    active: true, branch: activeBranch, user: user, cart: [], method: 'Tunai', history: [], pengeluaranList: [],
+                    loginTime: new Date().toLocaleString('id-ID'), discount: 0, 
+                    stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0, pengeluaran: 0 } 
+                };
                 saveSession(); location.reload();
             } else showToast("PIN Kasir Salah!", "error");
         }
@@ -509,10 +539,11 @@
 
         function switchView(viewId, el) {
             document.querySelectorAll('.tab-item').forEach(e => e.classList.remove('active')); el.classList.add('active');
-            ['pos', 'piutang', 'report', 'owner'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            ['pos', 'piutang', 'pengeluaran', 'report', 'owner'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
             if(viewId === 'report') updateReportUI();
             if(viewId === 'piutang') updatePiutangUI();
+            if(viewId === 'pengeluaran') updatePengeluaranUI();
         }
 
         // --- INVENTORY ---
@@ -576,6 +607,62 @@
             if(poinSaatIni >= 100 && session.discount === 0 && session.cart.length > 0) btnTukar.classList.remove('hidden'); else btnTukar.classList.add('hidden');
         }
         function redeemPoin() { const phone = document.getElementById('cust-phone').value.trim(); if(masterDB.customers[phone] >= 100) { masterDB.customers[phone] -= 100; session.discount = 5000; showToast("Poin ditukar! Diskon Rp 5.000 diterapkan."); updateCartUI(); } }
+
+        // --- PENGELUARAN ---
+        function tambahPengeluaran() {
+            const desc = document.getElementById('out-desc').value.trim();
+            const amount = parseInt(document.getElementById('out-amount').value);
+            if(!desc || !amount || amount <= 0) return showToast("Isi keterangan dan nominal pengeluaran dengan benar!", "error");
+            
+            const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const item = { id: Date.now(), time, desc, amount, user: session.user };
+            
+            session.pengeluaranList.push(item);
+            session.stats.pengeluaran += amount;
+            
+            masterDB.pengeluaranHistory.push({...item, date: new Date().toLocaleDateString('id-ID')});
+            
+            saveSession(); saveBranchDB();
+            
+            document.getElementById('out-desc').value = '';
+            document.getElementById('out-amount').value = '';
+            showToast("Pengeluaran berhasil dicatat!");
+            updatePengeluaranUI();
+            updateReportUI();
+        }
+
+        function hapusPengeluaran(id) {
+            if(!confirm("Batal mencatat pengeluaran ini?")) return;
+            const idx = session.pengeluaranList.findIndex(p => p.id === id);
+            if(idx > -1) {
+                const amount = session.pengeluaranList[idx].amount;
+                session.pengeluaranList.splice(idx, 1);
+                session.stats.pengeluaran -= amount;
+                
+                masterDB.pengeluaranHistory = masterDB.pengeluaranHistory.filter(p => p.id !== id);
+                
+                saveSession(); saveBranchDB();
+                showToast("Pengeluaran dibatalkan");
+                updatePengeluaranUI();
+                updateReportUI();
+            }
+        }
+
+        function updatePengeluaranUI() {
+            const tbody = document.getElementById('pengeluaran-list');
+            if(session.pengeluaranList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-center">Belum ada pengeluaran sesi ini</td></tr>';
+                return;
+            }
+            tbody.innerHTML = session.pengeluaranList.map(p => `
+                <tr>
+                    <td>${p.time}</td>
+                    <td>${p.desc}</td>
+                    <td style="color:var(--danger); font-weight:bold;">${formatRp(p.amount)}</td>
+                    <td><button class="btn-main" style="padding: 4px 8px; font-size:10px; background:var(--bg-dark); border:1px solid var(--border);" onclick="hapusPengeluaran(${p.id})">Batal</button></td>
+                </tr>
+            `).join('');
+        }
 
         // --- PIUTANG ---
         function updatePiutangUI() {
@@ -649,7 +736,6 @@
             saveBranchDB(); saveSession();
             
             if (printMode === 'wa') {
-                // MODIFIKASI: Jika nomor pelanggan kosong, gunakan WA Owner (6285701994169)
                 let targetWA = phone ? phone : "6285701994169";
                 
                 let textItems = sItems.map(i => `• ${i.name} (${i.qty}x) = ${formatRp(i.finalPrice*i.qty)}`).join('%0A');
@@ -750,21 +836,29 @@
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += "TANGGAL SHIFT,OMSET HARIAN\n";
             masterDB.shiftHistory.forEach(h => { csvContent += `${h.date},${h.omset}\n`; });
+            
+            csvContent += "\nRIWAYAT PENGELUARAN TOKO\nTgl,Keterangan,Nominal\n";
+            masterDB.pengeluaranHistory.forEach(p => { csvContent += `${p.date} ${p.time},${p.desc},${p.amount}\n`; });
+
             csvContent += "\nDAFTAR PIUTANG (KASBON)\nNama,No WA,Total Utang\n";
             masterDB.piutangList.forEach(p => { csvContent += `${p.name},${p.phone||'-'},${p.amount}\n`; });
+            
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", `Laporan_Rizqiyya_${activeBranch}_${new Date().toLocaleDateString('id-ID')}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast("Mengunduh Laporan CSV...");
         }
 
-        function resetMaster() { if(confirm("Hapus seluruh data master Cabang INI? (Kasir & Webhook tidak akan terhapus)")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15 }; saveBranchDB(); renderOwnerDash(); initApp(); showToast("Master Cabang Direset."); } }
+        function resetMaster() { if(confirm("Hapus seluruh data master Cabang INI? (Kasir & Webhook tidak akan terhapus)")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15, pengeluaranHistory: [] }; saveBranchDB(); renderOwnerDash(); initApp(); showToast("Master Cabang Direset."); } }
 
         function updateReportUI() {
             const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
+            const pengeluaran = session.stats.pengeluaran || 0;
+            
             document.getElementById('r-omset').innerText = formatRp(totPenjualanHariIni);
             document.getElementById('r-jual-tunai').innerText = formatRp(session.stats.omset_tunai);
             document.getElementById('r-jual-nontunai').innerText = formatRp(session.stats.qris + session.stats.debit);
             document.getElementById('r-utang-baru').innerText = formatRp(session.stats.kasbon);
             document.getElementById('r-lunas-utang').innerText = formatRp(session.stats.pelunasan_kasbon);
+            document.getElementById('r-pengeluaran').innerText = formatRp(pengeluaran);
 
             const tbody = document.getElementById('history-list');
             if(session.history.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="p-center">Belum ada transaksi</td></tr>';
@@ -783,13 +877,15 @@
                 
                 const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
                 const totUangMasukLaci = session.stats.omset_tunai + session.stats.pelunasan_kasbon;
+                const pengeluaran = session.stats.pengeluaran || 0;
+                const sisaUangFisikLaci = totUangMasukLaci - pengeluaran;
                 const now = new Date().toLocaleString('id-ID');
                 
                 // 1. AUTO-BACKUP KE WEBHOOK (GOOGLE SHEETS)
                 if(globalDB.webhookUrl) {
                     try {
                         showToast("Mencadangkan ke Cloud...", "info");
-                        const reportPayload = { cabang: activeBranch, kasir: session.user, buka: session.loginTime, tutup: now, omset: totPenjualanHariIni, tunai: session.stats.omset_tunai, qris_debit: session.stats.qris + session.stats.debit, piutang_baru: session.stats.kasbon, lunas_piutang: session.stats.pelunasan_kasbon };
+                        const reportPayload = { cabang: activeBranch, kasir: session.user, buka: session.loginTime, tutup: now, omset: totPenjualanHariIni, tunai: session.stats.omset_tunai, qris_debit: session.stats.qris + session.stats.debit, piutang_baru: session.stats.kasbon, lunas_piutang: session.stats.pelunasan_kasbon, pengeluaran: pengeluaran };
                         await fetch(globalDB.webhookUrl, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(reportPayload) });
                     } catch(e) { console.error("Cloud Error", e); }
                 }
@@ -812,8 +908,9 @@
 *💸 ARUS UANG TUNAI MASUK (LACI):*
 • (+) Penjualan Tunai: ${formatRp(session.stats.omset_tunai)}
 • (+) Lunas Kasbon Lama: ${formatRp(session.stats.pelunasan_kasbon)}
+• (-) Pengeluaran Toko: ${formatRp(pengeluaran)}
 
-*Total Uang Tunai Masuk: ${formatRp(totUangMasukLaci)}*
+*Estimasi Uang Fisik di Laci: ${formatRp(sisaUangFisikLaci)}*
 ============================
 *📦 SISA STOK FISIK:*
 • Galon: ${masterDB.stokGalon}
