@@ -144,13 +144,13 @@
             <h2 style="margin-bottom: 5px;">Rizqiyya Pertabotol</h2>
             <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 25px;">Sistem POS Cerdas & Kasir</p>
             
-            <select id="l-branch" class="form-control" onchange="renderLoginUsers()">
+            <select id="l-branch" class="form-control">
                 <option value="Toko Rumah">Toko Rumah</option>
                 <option value="Toko BBM Laundry">Toko BBM Laundry</option>
             </select>
-            <select id="l-user" class="form-control">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </select>
+            
+            <!-- Input teks Kasir, tidak lagi select dropdown -->
+            <input type="text" id="l-user" class="form-control" placeholder="Ketik Nama Kasir (Cth: Hafiz)">
             <input type="password" id="l-pass" class="form-control" placeholder="PIN Kasir">
             
             <button class="btn-main" onclick="handleLogin()">Buka Sesi</button>
@@ -419,7 +419,6 @@
     <!-- STRUK WEB (CUSTOMER) -->
     <div id="print-area">
         <div class="p-center">
-            <!-- LOGO STRUK PRINT -->
             <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e293b' stroke='%2316a34a' stroke-width='4'/%3E%3Cpath d='M30 30c0-5 15-5 15 0v45c0 5-15 5-15 0z' fill='%23fff'/%3E%3Cpath d='M45 35h15c15 0 15 20 0 20h-15' fill='none' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M50 55l15 20' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M75 75q5 10-5 10-10 0-5-10l5-7z' fill='%233b82f6'/%3E%3C/svg%3E" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 5px auto; display: block; border-radius: 50%; filter: grayscale(100%); object-fit: contain;">
             <div class="p-bold" style="font-size: 13.5px;">RIZQIYYA PERTABOTOL</div>
             <div style="font-size: 9px;">Cabang: <span id="p-branch"></span></div>
@@ -479,7 +478,6 @@
         }
 
         window.onload = () => {
-            renderLoginUsers();
             const savedSession = localStorage.getItem('pos_session_active');
             if (savedSession) {
                 session = JSON.parse(savedSession);
@@ -501,20 +499,6 @@
                 }
             }
         };
-
-        function renderLoginUsers() {
-            const sel = document.getElementById('l-user');
-            if(!sel) return;
-            
-            // Jaga-jaga jika globalDB terhapus sesaat sebelum fungsi ini dipanggil
-            let safeCashiers = (globalDB && globalDB.cashiers) ? globalDB.cashiers : [
-                {name: 'Hafiz', pin: '2006'}, {name: 'Endang', pin: '2121'}, 
-                {name: 'Pakde', pin: '2020'}, {name: 'Khotif', pin: '2222'}, {name: 'Nizar', pin: '1111'}
-            ];
-            
-            sel.innerHTML = '<option value="" disabled selected>-- Pilih Nama Kasir --</option>' + 
-                            safeCashiers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-        }
 
         function loadBranchDB(branchName) {
             let dbName = 'rizqiyya_db_' + branchName.replace(/\s+/g, '_');
@@ -541,19 +525,30 @@
 
         function handleLogin() {
             activeBranch = document.getElementById('l-branch').value;
-            const user = document.getElementById('l-user').value; const pass = document.getElementById('l-pass').value;
-            if (!user) return showToast("Pilih nama kasir dari daftar!", "error");
+            const user = document.getElementById('l-user').value.trim(); 
+            const pass = document.getElementById('l-pass').value.trim();
             
-            const cashierObj = globalDB.cashiers.find(c => c.name === user);
-            if (cashierObj && cashierObj.pin === pass) {
-                loadBranchDB(activeBranch);
-                session = { 
-                    active: true, branch: activeBranch, user: user, cart: [], method: 'Tunai', history: [], pengeluaranList: [],
-                    loginTime: new Date().toLocaleString('id-ID'), discount: 0, 
-                    stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0, pengeluaran: 0 } 
-                };
-                saveSession(); location.reload();
-            } else showToast("PIN Kasir Salah!", "error");
+            if (!user) return showToast("Ketik nama kasir!", "error");
+            if (!pass) return showToast("Masukkan PIN!", "error");
+            
+            // Pencarian nama kasir mengabaikan huruf besar/kecil
+            const cashierObj = globalDB.cashiers.find(c => c.name.toLowerCase() === user.toLowerCase());
+            
+            if (cashierObj) {
+                if (cashierObj.pin === pass) {
+                    loadBranchDB(activeBranch);
+                    session = { 
+                        active: true, branch: activeBranch, user: cashierObj.name, cart: [], method: 'Tunai', history: [], pengeluaranList: [],
+                        loginTime: new Date().toLocaleString('id-ID'), discount: 0, 
+                        stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0, pengeluaran: 0 } 
+                    };
+                    saveSession(); location.reload();
+                } else {
+                    showToast("PIN Kasir Salah!", "error");
+                }
+            } else {
+                showToast("Kasir tidak terdaftar di sistem!", "error");
+            }
         }
 
         // --- APP INIT & UI ---
@@ -679,8 +674,8 @@
             } else if (totalBayar === tot) {
                 status.style.color = 'var(--primary)'; status.innerText = `Uang Pas! (Sisa: Rp 0)`;
             } else {
-                let kembali = t - (tot - (q + d + k)); // Kembalian diambil dari tunai
-                if(kembali < 0) kembali = 0; // Jaga-jaga logika aneh
+                let kembali = t - (tot - (q + d + k)); 
+                if(kembali < 0) kembali = 0; 
                 status.style.color = 'var(--warning)'; status.innerText = `Kembali (Tunai): ${formatRp(kembali)}`;
             }
         }
@@ -904,9 +899,9 @@
             if(!n || !p) return showToast("Nama dan PIN harus diisi", "error");
             if(!globalDB.cashiers) globalDB.cashiers = [];
             globalDB.cashiers.push({name: n, pin: p}); saveGlobalDB(); showToast("Kasir ditambah!");
-            document.getElementById('new-kasir-name').value=''; document.getElementById('new-kasir-pin').value=''; renderOwnerDash(); renderLoginUsers();
+            document.getElementById('new-kasir-name').value=''; document.getElementById('new-kasir-pin').value=''; renderOwnerDash();
         }
-        function delKasir(idx) { if(confirm("Hapus data kasir ini?")) { globalDB.cashiers.splice(idx, 1); saveGlobalDB(); renderOwnerDash(); renderLoginUsers(); showToast("Kasir Dihapus"); } }
+        function delKasir(idx) { if(confirm("Hapus data kasir ini?")) { globalDB.cashiers.splice(idx, 1); saveGlobalDB(); renderOwnerDash(); showToast("Kasir Dihapus"); } }
 
         function broadcastPromo(phone) { window.open(`https://api.whatsapp.com/send?phone=${phone}&text=Halo Pelanggan Setia *Rizqiyya Pertabotol*!%0AKami ada promo diskon khusus untuk Anda hari ini. Tunjukkan pesan ini ke kasir untuk menukar poin/klaim diskon.%0ATerima Kasih!`, '_blank'); }
 
