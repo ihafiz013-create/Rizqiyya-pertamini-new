@@ -65,15 +65,10 @@
         .cart-name { font-size: 13px; font-weight: 700; color: #fff; display: block; margin-bottom: 4px; }
         .cart-controls { display: flex; align-items: center; gap: 10px; }
         .qty-btn { width: 28px; height: 28px; border-radius: 6px; background: var(--border); border: none; color: white; font-weight: bold; cursor: pointer; }
-        .del-btn { width: 28px; height: 28px; border-radius: 6px; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: var(--danger); cursor: pointer; font-weight: bold; }
 
         .total-box { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.3s; }
-        .total-box.qris-active { background: rgba(147, 51, 234, 0.1); border-color: rgba(147, 51, 234, 0.4); }
-        .total-box.kasbon-active { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); }
         .total-label { font-size: 14px; font-weight: 600; color: var(--text-muted); }
         .total-amount { font-size: 22px; font-weight: 800; color: var(--accent); }
-        .qris-active .total-amount { color: #c084fc; }
-        .kasbon-active .total-amount { color: var(--danger); }
 
         .pay-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .pay-btn { padding: 12px; background: var(--bg-dark); border: 2px solid var(--border); border-radius: 10px; color: var(--text-muted); font-weight: 700; cursor: pointer; font-size: 12px; }
@@ -103,32 +98,36 @@
         .dash-card h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
         .dash-val { font-size: 28px; font-weight: 800; color: var(--owner); }
 
-        #print-area { display: none; }
+        #print-area, #print-eod-area { display: none; }
+        
         @media print {
             body { background: white; }
             body * { visibility: hidden; }
-            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11.5px; color: #000; background: #fff; padding: 2mm; margin: 0; }
+            
+            /* Struk Transaksi Standar */
+            #print-area { display: block; position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11.5px; color: #000; background: #fff; padding: 2mm; margin: 0; }
             #print-area * { visibility: visible; color: #000 !important; }
+            
+            /* Struk Laporan Shift (EOD) */
+            #print-eod-area { display: block; position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #000; background: #fff; padding: 2mm; margin: 0; }
+            #print-eod-area * { visibility: visible; color: #000 !important; }
+
+            /* CSS Helper Khusus Print */
+            .eod-mode #print-area { display: none !important; }
+            .trx-mode #print-eod-area { display: none !important; }
+
             .p-center { text-align: center; }
             .p-bold { font-weight: 900; }
             .p-line { border-bottom: 1.5px dashed #000; margin: 6px 0; }
+            .p-line-solid { border-bottom: 1.5px solid #000; margin: 6px 0; }
             .p-flex { display: flex; justify-content: space-between; margin-bottom: 3px; }
             .p-logo { width: 55px; height: 55px; margin: 0 auto 5px auto; display: block; border-radius: 50%; filter: grayscale(100%) contrast(200%) brightness(90%); object-fit: contain; }
         }
     </style>
 </head>
-<body>
+<body class="trx-mode">
 
     <div id="toast-container"></div>
-
-    <div id="splash-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020617; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; animation: hideSplash 0.7s ease 2s forwards;">
-        <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--accent); background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden;">
-            <img src="Gemini_Generated_Image_7l55pe7l55pe7l55.jfif" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
-        <div style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 15px;">Rizqiyya Pertabotol</div>
-        <div style="font-size: 12px; color: var(--accent); margin-top: 5px;">Menerapkan Sistem Akuntansi Laci (Offline)...</div>
-    </div>
-    <style>@keyframes hideSplash { to { opacity: 0; visibility: hidden; } }</style>
 
     <div id="login-section">
         <div class="login-box">
@@ -167,7 +166,7 @@
         </header>
 
         <div class="main-container">
-            <!-- PANEL KIRI (UTAMA) -->
+            <!-- PANEL KIRI -->
             <div>
                 <div class="nav-tabs">
                     <div class="tab-item active" onclick="switchView('pos', this)">Kasir (POS)</div>
@@ -197,14 +196,13 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="panel">
                         <div class="panel-title">Katalog Produk Dinamis</div>
                         <div id="dynamic-catalog-container"></div>
                     </div>
                 </div>
 
-                <!-- VIEW 2: BUKU PIUTANG -->
+                <!-- VIEW 2: PIUTANG -->
                 <div id="view-piutang" class="hidden">
                     <div class="panel">
                         <div class="panel-title" style="color: var(--warning);">Daftar Kasbon (Piutang) Pelanggan</div>
@@ -216,13 +214,13 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: LAPORAN SHIFT -->
+                <!-- VIEW 3: LAPORAN -->
                 <div id="view-report" class="hidden">
                     <div class="panel" style="margin-bottom: 20px;">
                         <div class="panel-title">Ringkasan Omset & Laci Shift Ini</div>
                         <div class="stock-grid">
                             <div class="stock-item">
-                                <div style="font-size: 11px;">TOTAL PENJUALAN / OMSET HARI INI</div>
+                                <div style="font-size: 11px;">TOTAL PENJUALAN / OMSET</div>
                                 <div class="stock-val" id="r-omset" style="font-size:22px;">Rp 0</div>
                                 <div style="font-size:10px; color:var(--text-muted);">Mencakup Jual Tunai, QRIS, Debit, & Kasbon Baru</div>
                             </div>
@@ -241,7 +239,6 @@
                             <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 11px; border: 1px solid var(--primary);">Lunas Utang: <br><strong style="color:var(--primary)" id="r-lunas-utang">Rp 0</strong></div>
                         </div>
 
-                        <!-- MODUL PENGELUARAN -->
                         <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
                             <div style="font-size: 12px; color: var(--danger); margin-bottom: 10px; font-weight: bold;">CATAT PENGELUARAN OPERASIONAL</div>
                             <div style="display: flex; gap: 10px;">
@@ -261,12 +258,10 @@
                     </div>
                 </div>
 
-                <!-- VIEW 4: DASBOR OWNER -->
+                <!-- VIEW 4: OWNER -->
                 <div id="view-owner" class="hidden">
                     <div class="panel" style="margin-bottom: 20px;">
-                        <div class="panel-title" style="color: var(--owner);">
-                            Editor Produk (Katalog Dinamis)
-                        </div>
+                        <div class="panel-title" style="color: var(--owner);">Editor Produk (Katalog Dinamis)</div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                             <input type="text" id="cat-name" class="form-control" placeholder="Nama Produk (Cth: Aqua Galon)">
                             <input type="text" id="cat-kategori" class="form-control" placeholder="Kategori (Cth: Kebutuhan Rumah / BBM)">
@@ -275,7 +270,6 @@
                             <input type="number" id="cat-vol" class="form-control" placeholder="Vol (Kosongkan jika bukan literan)">
                         </div>
                         <button class="btn-main" style="background: var(--owner); margin-bottom: 15px;" onclick="addDynamicProduct()">+ Tambah Produk Baru</button>
-                        
                         <table>
                             <thead><tr><th>Kategori</th><th>Nama</th><th>Harga</th><th>Hapus</th></tr></thead>
                             <tbody id="owner-catalog-list"></tbody>
@@ -284,21 +278,13 @@
 
                     <div class="panel">
                         <div class="panel-title" style="color: var(--owner);">
-                            Analitik Keseluruhan (Master Database)
+                            Analitik Keseluruhan
                             <button class="btn-main" style="width: auto; padding: 6px 12px; font-size: 11px; background: var(--danger);" onclick="resetMaster()">Reset Data</button>
                         </div>
-                        
                         <div class="stock-grid">
-                            <div class="dash-card">
-                                <h3>Total Penjualan Kumulatif</h3>
-                                <div class="dash-val" id="ow-omset">Rp 0</div>
-                            </div>
-                            <div class="dash-card">
-                                <h3>Total Liter Terjual</h3>
-                                <div class="dash-val" style="color: var(--accent);" id="ow-liter">0 L</div>
-                            </div>
+                            <div class="dash-card"><h3>Total Penjualan Kumulatif</h3><div class="dash-val" id="ow-omset">Rp 0</div></div>
+                            <div class="dash-card"><h3>Total Liter Terjual</h3><div class="dash-val" style="color: var(--accent);" id="ow-liter">0 L</div></div>
                         </div>
-
                         <div class="dash-card" style="background: var(--bg-dark);">
                             <h3>Grafik Penjualan Shift Terakhir</h3>
                             <canvas id="omsetChart" width="400" height="200"></canvas>
@@ -347,7 +333,7 @@
         </div>
     </div>
 
-    <!-- MODAL QRIS & OWNER PIN & TUTUP SHIFT -->
+    <!-- MODALS -->
     <div id="digital-modal" class="modal-overlay hidden">
         <div class="modal-box">
             <h3 style="color: #fff; margin-bottom: 5px;">Pembayaran QRIS / GoPay</h3>
@@ -373,12 +359,15 @@
             <h3 style="color: var(--danger); margin-bottom: 10px;">Tutup Shift & Hitung Laci</h3>
             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Hitung semua uang kertas & koin di laci kasir sekarang. Komputer akan mencocokkannya dengan estimasi arus kas.</p>
             <input type="number" id="actual-cash-input" class="form-control" placeholder="Total Uang Fisik di Laci (Rp)">
-            <button class="btn-main" style="background: var(--danger);" onclick="processCloseShift()">Validasi & Tutup Shift</button>
+            
+            <button class="btn-main" style="background: var(--primary); margin-bottom: 10px;" onclick="processCloseShift('print')">🖨 Cetak Struk Shift & Tutup</button>
+            <button class="btn-main" style="background: var(--owner);" onclick="processCloseShift('wa')">📲 Kirim WA Saja & Tutup</button>
+            
             <button class="btn-main" style="background: var(--bg-dark); border: 1px solid var(--border); margin-top: 10px;" onclick="closeShiftModal()">Batal</button>
         </div>
     </div>
 
-    <!-- STRUK PRINT -->
+    <!-- STRUK TRANSAKSI (CUSTOMER) -->
     <div id="print-area">
         <div class="p-center">
             <img src="Gemini_Generated_Image_7l55pe7l55pe7l55.jfif" alt="Logo" class="p-logo">
@@ -401,6 +390,36 @@
         <div class="p-flex" id="p-change-row"><span>Kmbali:</span><span id="p-change"></span></div>
         <div class="p-line"></div>
         <div class="p-center" style="font-size: 9.5px; margin-top: 6px;">Terima Kasih Atas Kunjungan Anda<br>Kebutuhan Rumah & BBM Eceran</div>
+    </div>
+
+    <!-- STRUK LAPORAN SHIFT (END OF DAY / EOD) -->
+    <div id="print-eod-area">
+        <div class="p-center">
+            <div class="p-bold" style="font-size: 14px;">LAPORAN TUTUP SHIFT</div>
+            <div style="font-size: 10px;">Rizqiyya Pertabotol</div>
+        </div>
+        <div class="p-line-solid"></div>
+        <div class="p-flex"><span>Tgl:</span><span id="eod-date"></span></div>
+        <div class="p-flex"><span>Kasir:</span><span id="eod-cashier"></span></div>
+        <div class="p-line"></div>
+        <div class="p-bold p-center" style="margin-bottom: 5px;">RINGKASAN PENJUALAN</div>
+        <div class="p-flex"><span>Jual Tunai:</span><span id="eod-jual-tunai"></span></div>
+        <div class="p-flex"><span>QRIS/Debit:</span><span id="eod-jual-nontunai"></span></div>
+        <div class="p-flex"><span>Piutang Baru:</span><span id="eod-utang-baru"></span></div>
+        <div class="p-flex p-bold" style="margin-top: 4px;"><span>TOTAL OMSET:</span><span id="eod-omset"></span></div>
+        <div class="p-line"></div>
+        <div class="p-bold p-center" style="margin-bottom: 5px;">ARUS KAS LACI (CASH)</div>
+        <div class="p-flex"><span>Modal Awal:</span><span id="eod-modal"></span></div>
+        <div class="p-flex"><span>Jual Tunai:</span><span id="eod-tunai-masuk"></span></div>
+        <div class="p-flex"><span>Lunas Utang:</span><span id="eod-lunas"></span></div>
+        <div class="p-flex"><span>Pengeluaran:</span><span id="eod-keluar"></span></div>
+        <div class="p-line"></div>
+        <div class="p-flex p-bold"><span>ESTIMASI SISTEM:</span><span id="eod-estimasi"></span></div>
+        <div class="p-flex p-bold"><span>FISIK DIHITUNG:</span><span id="eod-aktual"></span></div>
+        <div class="p-line-solid"></div>
+        <div class="p-flex p-bold"><span style="font-size:13px;">SELISIH:</span><span id="eod-selisih" style="font-size:13px;"></span></div>
+        <div class="p-line-solid"></div>
+        <div class="p-center" style="font-size: 9px; margin-top: 10px;">Tervalidasi Otomatis Oleh Sistem<br>Harap simpan struk ini di laci kasir.</div>
     </div>
 
     <script>
@@ -534,7 +553,6 @@
             info.innerText = `Pelanggan: ${poinSaatIni} Poin (+${literBaru} Baru)`;
         }
 
-        // --- SISTEM PIUTANG (PELUNASAN) ---
         function updatePiutangUI() {
             const tbody = document.getElementById('piutang-list');
             if(masterDB.piutangList.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-center">Tidak ada pelanggan berutang</td></tr>'; return; }
@@ -557,7 +575,6 @@
             }
         }
 
-        // --- PROSES TRANSAKSI JUAL BEI ---
         let printMode = 'normal';
         function processCheckout(mode) {
             printMode = mode;
@@ -592,9 +609,7 @@
                 if(i.cat.toLowerCase().includes('bbm')) deductBotolQty += i.qty;
             });
 
-            masterDB.totalOmset += total;
-            masterDB.totalLiter += tLiter;
-            
+            masterDB.totalOmset += total; masterDB.totalLiter += tLiter;
             if(phone) masterDB.customers[phone] = (masterDB.customers[phone] || 0) + tLiter;
             if(session.method === 'Kasbon') masterDB.piutangList.push({ id: Date.now(), name: custName, amount: total, date: new Date().toLocaleDateString('id-ID') });
 
@@ -607,6 +622,7 @@
             if(session.method === 'Debit') session.stats.debit += total;
             saveData();
             
+            document.body.className = 'trx-mode'; // Mode struk transaksi pelanggan
             document.getElementById('p-date').innerText = new Date().toLocaleDateString('id-ID') + ' ' + time;
             document.getElementById('p-trx').innerText = trxId; document.getElementById('p-cashier').innerText = session.user;
             
@@ -622,22 +638,14 @@
             document.getElementById('p-method').innerText = trx.method; document.getElementById('p-total').innerText = total.toLocaleString('id-ID');
             document.getElementById('p-pay').innerText = cash.toLocaleString('id-ID'); document.getElementById('p-change').innerText = trx.change.toLocaleString('id-ID');
 
-            if(printMode === 'bluetooth') printViaBluetooth(trx);
+            if(printMode === 'bluetooth') showToast("Pastikan Bluetooth terhubung di setting HP. Belum support web bluetooth total.", "error");
             else { showToast("Mencetak Struk..."); setTimeout(() => window.print(), 500); }
             
             session.cart = []; document.getElementById('cash-amount').value = ''; document.getElementById('cust-phone').value = ''; document.getElementById('kasbon-name').value = '';
             updateCartUI(); updatePiutangUI();
         }
 
-        async function printViaBluetooth(trx) {
-            try {
-                showToast("Mencari Printer Bluetooth...", "success");
-                const device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }] });
-                await device.gatt.connect(); showToast("Terkoneksi! Mengirim Data..."); setTimeout(() => { showToast("Struk Tercetak!"); }, 1000);
-            } catch (error) { showToast("Bluetooth Error. Gunakan cetak standar.", "error"); setTimeout(() => window.print(), 1000); }
-        }
-
-        // --- DASHBOARD OWNER (KATALOG & ANALITIK) ---
+        // --- DASHBOARD OWNER ---
         let ownerChart;
         function reqOwnerAccess(el) { document.getElementById('owner-pin').value = ''; document.getElementById('pin-modal').classList.remove('hidden'); }
         function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); }
@@ -670,11 +678,7 @@
             saveData(); showToast("Produk ditambahkan!"); renderOwnerDash(); initApp();
             document.getElementById('cat-name').value = ''; document.getElementById('cat-kategori').value = ''; document.getElementById('cat-tunai').value = ''; document.getElementById('cat-qris').value = ''; document.getElementById('cat-vol').value = '';
         }
-
-        function deleteProduct(id) {
-            if(confirm("Hapus produk ini dari toko?")) { masterDB.catalog = masterDB.catalog.filter(p => p.id !== id); saveData(); renderOwnerDash(); initApp(); showToast("Produk Dihapus"); }
-        }
-
+        function deleteProduct(id) { if(confirm("Hapus produk ini dari toko?")) { masterDB.catalog = masterDB.catalog.filter(p => p.id !== id); saveData(); renderOwnerDash(); initApp(); showToast("Produk Dihapus"); } }
         function resetMaster() { if(confirm("Hapus seluruh data Master?")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [] }; saveData(); renderOwnerDash(); initApp(); showToast("Master Direset."); } }
 
         function updateReportUI() {
@@ -701,23 +705,59 @@
             }).join('');
         }
 
-        // --- SISTEM TUTUP SHIFT & VALIDASI SELISIH ---
-        function triggerCloseShift() { document.getElementById('actual-cash-input').value = ''; document.getElementById('close-shift-modal').classList.remove('hidden'); }
+        // --- SISTEM TUTUP SHIFT & VALIDASI ---
+        function triggerCloseShift() { 
+            if(session.cart.length > 0) {
+                return showToast("Batalkan atau bayar keranjang yang masih terisi terlebih dahulu!", "error");
+            }
+            document.getElementById('actual-cash-input').value = ''; 
+            document.getElementById('close-shift-modal').classList.remove('hidden'); 
+        }
         function closeShiftModal() { document.getElementById('close-shift-modal').classList.add('hidden'); }
         
-        function processCloseShift() {
+        function processCloseShift(action) {
             const actualCash = parseInt(document.getElementById('actual-cash-input').value);
             if(isNaN(actualCash)) return showToast("Masukkan total uang fisik di laci!", "error");
 
             const expectedCash = (session.modal + session.stats.omset_tunai + session.stats.pelunasan_kasbon) - session.stats.pengeluaran;
             const selisih = actualCash - expectedCash;
-            let selisihText = selisih === 0 ? "✅ SESUAI/BALANCE (Rp 0)" : (selisih > 0 ? `🔼 PLUS/LEBIH: ${formatRp(selisih)}` : `🔻 MINUS/KURANG: ${formatRp(selisih)}`);
+            let selisihText = selisih === 0 ? "✅ SESUAI (Rp 0)" : (selisih > 0 ? `🔼 PLUS: ${formatRp(selisih)}` : `🔻 MINUS: ${formatRp(selisih)}`);
+            let selisihPrint = selisih === 0 ? "PAS / SESUAI" : (selisih > 0 ? `LEBIH ${formatRp(selisih)}` : `KURANG ${formatRp(selisih)}`);
 
-            const waNum = "6285701994169"; const now = new Date().toLocaleString('id-ID');
-            let expList = session.expenses.length > 0 ? session.expenses.map(e => `  - ${e.desc}: ${formatRp(e.amount)}`).join('%0A') : "  (Tidak ada pengeluaran)";
+            const now = new Date().toLocaleString('id-ID');
             const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
 
-            const msg = `*📊 LAPORAN TUTUP SHIFT RIZQIYYA PERTABOTOL*
+            // AKSI CETAK STRUK LAPORAN (EOD)
+            if (action === 'print') {
+                document.body.className = 'eod-mode'; // Tampilkan layout khusus laporan EOD
+                document.getElementById('eod-date').innerText = now;
+                document.getElementById('eod-cashier').innerText = session.user;
+                
+                document.getElementById('eod-jual-tunai').innerText = formatRp(session.stats.omset_tunai);
+                document.getElementById('eod-jual-nontunai').innerText = formatRp(session.stats.qris + session.stats.debit);
+                document.getElementById('eod-utang-baru').innerText = formatRp(session.stats.kasbon);
+                document.getElementById('eod-omset').innerText = formatRp(totPenjualanHariIni);
+
+                document.getElementById('eod-modal').innerText = formatRp(session.modal);
+                document.getElementById('eod-tunai-masuk').innerText = formatRp(session.stats.omset_tunai);
+                document.getElementById('eod-lunas').innerText = formatRp(session.stats.pelunasan_kasbon);
+                document.getElementById('eod-keluar').innerText = formatRp(session.stats.pengeluaran);
+                
+                document.getElementById('eod-estimasi').innerText = formatRp(expectedCash);
+                document.getElementById('eod-aktual').innerText = formatRp(actualCash);
+                
+                const selisihEl = document.getElementById('eod-selisih');
+                selisihEl.innerText = selisihPrint;
+                
+                showToast("Mencetak Laporan Shift...");
+                setTimeout(() => { window.print(); executeReset(); }, 500);
+            } 
+            
+            // AKSI KIRIM WA
+            else if (action === 'wa') {
+                const waNum = "6285701994169"; 
+                let expList = session.expenses.length > 0 ? session.expenses.map(e => `  - ${e.desc}: ${formatRp(e.amount)}`).join('%0A') : "  (Tidak ada pengeluaran)";
+                const msg = `*📊 LAPORAN TUTUP SHIFT RIZQIYYA PERTABOTOL*
 ============================
 🏢 Cabang: ${session.branch}
 👤 Kasir: ${session.user}
@@ -744,14 +784,30 @@ ${expList}
 • Uang Fisik Dilaporkan: ${formatRp(actualCash)}
 • *Selisih Laci: ${selisihText}*
 ============================
-*📦 SISA STOK FISIK:*
-• Galon: ${session.stokGalon} | Botol: ${session.stokBotol}
-============================
 Laporan Tervalidasi Sistem (✔)`;
+                window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${encodeURIComponent(msg)}`, '_blank');
+                executeReset(totPenjualanHariIni);
+            }
+        }
 
-            window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${encodeURIComponent(msg)}`, '_blank');
+        // FUNGSI PEMBERSIHAN SESI TOTAL
+        function executeReset(totPenjualanHariIni) {
             masterDB.shiftHistory.push({ date: new Date().toLocaleDateString(), omset: totPenjualanHariIni });
-            session = { active: false }; saveData(); setTimeout(() => location.reload(), 2000);
+            // Membersihkan session secara total dari localStorage
+            session = { active: false }; 
+            localStorage.setItem('pos_session', JSON.stringify(session)); 
+            localStorage.setItem('rizqiyya_master_db', JSON.stringify(masterDB));
+            
+            closeShiftModal();
+            
+            // Munculkan kembali splash screen untuk efek loading kembali ke login
+            const splash = document.getElementById('splash-screen');
+            splash.style.animation = 'none';
+            splash.style.opacity = '1';
+            splash.style.visibility = 'visible';
+            splash.innerHTML = `<div style="font-size: 20px; font-weight: 800; color: #fff;">Membersihkan Data Laci...</div>`;
+            
+            setTimeout(() => location.reload(), 1500); // Reload halaman menjadi fresh
         }
     </script>
 </body>
