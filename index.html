@@ -118,12 +118,12 @@
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
         th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
 
-        /* Thermal Print Optimization (58mm) */
+        /* Thermal Print Optimization (58mm) DENGAN PERBAIKAN BLANK LAYAR */
         #print-area { display: none; }
         @media print {
             body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: black; background: white; padding: 2mm; margin: 0; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: black; background: white; padding: 2mm; margin: 0; }
+            #print-area * { visibility: visible; }
             .p-center { text-align: center; }
             .p-bold { font-weight: bold; }
             .p-line { border-bottom: 1px dashed black; margin: 4px 0; }
