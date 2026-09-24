@@ -149,7 +149,7 @@
                 <option value="Toko BBM Laundry">Toko BBM Laundry</option>
             </select>
             <select id="l-user" class="form-control">
-                <option value="" disabled selected>-- Pilih Nama Kasir --</option>
+                <!-- Diisi otomatis oleh JavaScript -->
             </select>
             <input type="password" id="l-pass" class="form-control" placeholder="PIN Kasir">
             
@@ -444,14 +444,20 @@
     </div>
 
     <script>
-        // --- 1. GLOBAL DATABASE (KASIR, WEBHOOK, OWNER PIN) ---
-        let globalDB = JSON.parse(localStorage.getItem('rizqiyya_global')) || {
-            cashiers: [
-                {name: 'Hafiz', pin: '2006'}, {name: 'Endang', pin: '2121'}, 
-                {name: 'Pakde', pin: '2020'}, {name: 'Khotif', pin: '2222'}, {name: 'Nizar', pin: '1111'}
-            ],
-            ownerPin: '9999', webhookUrl: ''
-        };
+        // --- 1. GLOBAL DATABASE DENGAN SAFETY CHECK ---
+        let globalDB = JSON.parse(localStorage.getItem('rizqiyya_global'));
+        
+        // JIKA KOSONG ATAU KORUP, KEMBALIKAN KE DEFAULT
+        if (!globalDB || !globalDB.cashiers || !Array.isArray(globalDB.cashiers)) {
+            globalDB = {
+                cashiers: [
+                    {name: 'Hafiz', pin: '2006'}, {name: 'Endang', pin: '2121'}, 
+                    {name: 'Pakde', pin: '2020'}, {name: 'Khotif', pin: '2222'}, {name: 'Nizar', pin: '1111'}
+                ],
+                ownerPin: '9999', webhookUrl: ''
+            };
+            localStorage.setItem('rizqiyya_global', JSON.stringify(globalDB));
+        }
         
         // --- 2. MULTI-BRANCH STATE ---
         let activeBranch = '';
@@ -468,7 +474,7 @@
         function formatRp(num) { return 'Rp ' + num.toLocaleString('id-ID'); }
         function showToast(msg, type = 'success') {
             const c = document.getElementById('toast-container'); const t = document.createElement('div');
-            t.className = `toast ${type}`; t.innerHTML = `<span>${type === 'success' ? '✔' : (type === 'info' ? 'ℹ' : '✖')}${msg}</span>`;
+            t.className = `toast ${type}`; t.innerHTML = `<span>${type === 'success' ? '✔' : (type === 'info' ? 'ℹ' : '✖')} ${msg}</span>`;
             c.appendChild(t); setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
         }
 
@@ -498,8 +504,16 @@
 
         function renderLoginUsers() {
             const sel = document.getElementById('l-user');
+            if(!sel) return;
+            
+            // Jaga-jaga jika globalDB terhapus sesaat sebelum fungsi ini dipanggil
+            let safeCashiers = (globalDB && globalDB.cashiers) ? globalDB.cashiers : [
+                {name: 'Hafiz', pin: '2006'}, {name: 'Endang', pin: '2121'}, 
+                {name: 'Pakde', pin: '2020'}, {name: 'Khotif', pin: '2222'}, {name: 'Nizar', pin: '1111'}
+            ];
+            
             sel.innerHTML = '<option value="" disabled selected>-- Pilih Nama Kasir --</option>' + 
-                            globalDB.cashiers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                            safeCashiers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
         }
 
         function loadBranchDB(branchName) {
@@ -528,7 +542,7 @@
         function handleLogin() {
             activeBranch = document.getElementById('l-branch').value;
             const user = document.getElementById('l-user').value; const pass = document.getElementById('l-pass').value;
-            if (!user) return showToast("Pilih kasir!", "error");
+            if (!user) return showToast("Pilih nama kasir dari daftar!", "error");
             
             const cashierObj = globalDB.cashiers.find(c => c.name === user);
             if (cashierObj && cashierObj.pin === pass) {
@@ -626,7 +640,7 @@
             let total = subtotal - session.discount;
 
             list.innerHTML = session.cart.length === 0 ? `<div style="text-align: center; color: var(--text-muted); padding: 10px;">Kosong</div>` : session.cart.map(c => `
-                <div class="cart-item"><div class="cart-info"><span class="cart-name">${c.name}</span><span style="color:var(--accent); font-size:12px;">${formatRp(getCurrentPrice(c))} x${c.qty}</span></div>
+                <div class="cart-item"><div class="cart-info"><span class="cart-name">${c.name}</span><span style="color:var(--accent); font-size:12px;">${formatRp(getCurrentPrice(c))} x ${c.qty}</span></div>
                 <div class="cart-controls"><button class="qty-btn" onclick="changeQty('${c.id}', -1)">-</button><span style="font-weight:bold; font-size:14px; width:20px; text-align:center;">${c.qty}</span><button class="qty-btn" onclick="changeQty('${c.id}', 1)">+</button></div></div>`).join('');
             
             const elDisc = document.getElementById('discount-info');
@@ -709,7 +723,7 @@
             tbody.innerHTML = masterDB.piutangList.map(p => `<tr><td>${p.date}</td><td style="font-weight:bold;">${p.name}<br><span style="font-size:10px; font-weight:normal;">${p.phone||''}</span></td><td style="color:var(--danger); font-weight:bold;">${formatRp(p.amount)}</td>
                 <td><button class="btn-main" style="padding: 5px 8px; font-size: 11px; margin-bottom:5px;" onclick="payPiutang(${p.id})">Lunas</button>${p.phone ? `<button class="btn-main btn-wa" style="padding: 5px 8px; font-size: 11px;" onclick="tagihWA(${p.id})">WA</button>` : ''}</td></tr>`).join('');
         }
-        function tagihWA(id) { const item = masterDB.piutangList.find(p => p.id === id); if(item && item.phone) window.open(`https://api.whatsapp.com/send?phone=${item.phone}&text=Halo Bapak/Ibu${item.name},%0AMengingatkan untuk tagihan kasbon di *Rizqiyya Pertabotol* sejumlah *${formatRp(item.amount)}* pada tanggal${item.date}.%0A%0ATerima Kasih.`, '_blank'); }
+        function tagihWA(id) { const item = masterDB.piutangList.find(p => p.id === id); if(item && item.phone) window.open(`https://api.whatsapp.com/send?phone=${item.phone}&text=Halo Bapak/Ibu ${item.name},%0AMengingatkan untuk tagihan kasbon di *Rizqiyya Pertabotol* sejumlah *${formatRp(item.amount)}* pada tanggal ${item.date}.%0A%0ATerima Kasih.`, '_blank'); }
         function payPiutang(id) {
             if(!confirm("Terima uang pelunasan tunai?")) return;
             const idx = masterDB.piutangList.findIndex(p => p.id === id);
@@ -768,9 +782,8 @@
                 splitData.debit = parseInt(document.getElementById('split-debit').value) || 0;
                 splitData.kasbon = parseInt(document.getElementById('split-kasbon').value) || 0;
                 
-                // Tunai efektif yang masuk sebagai omset tunai (bukan kembalian)
                 const totalNonCash = splitData.qris + splitData.debit + splitData.kasbon;
-                splitData.tunai = total - totalNonCash; // Uang pas
+                splitData.tunai = total - totalNonCash; 
                 splitData.change = splitData.cash_received - splitData.tunai;
             } else if (session.method === 'Tunai') {
                 splitData.cash_received = parseInt(document.getElementById('cash-amount').value) || 0;
@@ -799,7 +812,7 @@
             session.history.push(trx); 
             
             // STATS Sesi ini (Pemecahan Omset)
-            session.stats.tunai = (session.stats.tunai || 0) + splitData.tunai; // Migrasi agar tidak rancu
+            session.stats.tunai = (session.stats.tunai || 0) + splitData.tunai; 
             session.stats.omset_tunai = (session.stats.omset_tunai || 0) + splitData.tunai;
             session.stats.qris += splitData.qris;
             session.stats.debit += splitData.debit;
@@ -813,12 +826,12 @@
 
             if (printMode === 'wa') {
                 let targetWA = phone ? phone : "6285701994169";
-                let textItems = sItems.map(i => `• ${i.name} (${i.qty}x) =${formatRp(i.finalPrice*i.qty)}`).join('%0A');
+                let textItems = sItems.map(i => `• ${i.name} (${i.qty}x) = ${formatRp(i.finalPrice*i.qty)}`).join('%0A');
                 let textDisc = session.discount > 0 ? `%0A• Diskon Poin: -${formatRp(session.discount)}` : '';
                 
-                let textSplit = (session.method === 'Campuran') ? `%0A%0A*Rincian Pembayaran:*%0A- Tunai: ${formatRp(splitData.tunai)}\%0A- QRIS:${formatRp(splitData.qris)}%0A- Debit: ${formatRp(splitData.debit)}\%0A- Utang Kasbon:${formatRp(splitData.kasbon)}` : '';
+                let textSplit = (session.method === 'Campuran') ? `%0A%0A*Rincian Pembayaran:*%0A- Tunai: ${formatRp(splitData.tunai)}%0A- QRIS: ${formatRp(splitData.qris)}%0A- Debit: ${formatRp(splitData.debit)}%0A- Utang Kasbon: ${formatRp(splitData.kasbon)}` : '';
 
-                let msg = `*STRUK RIZQIYYA PERTABOTOL*%0ACabang: ${activeBranch}%0ATgl: ${new Date().toLocaleDateString('id-ID')}${time}%0ANo: ${trxId}\%0A\%0A${textItems}${textDisc}\%0A\%0A*TOTAL:${formatRp(total)}*%0AMetode: ${session.method}${textSplit}%0A%0ATerima Kasih!`;
+                let msg = `*STRUK RIZQIYYA PERTABOTOL*%0ACabang: ${activeBranch}%0ATgl: ${new Date().toLocaleDateString('id-ID')} ${time}%0ANo: ${trxId}%0A%0A${textItems}${textDisc}%0A%0A*TOTAL: ${formatRp(total)}*%0AMetode: ${session.method}${textSplit}%0A%0ATerima Kasih!`;
                 
                 window.open(`https://api.whatsapp.com/send?phone=${targetWA}&text=${msg}`, '_blank');
                 if(!phone) showToast("Nomor kosong! Struk otomatis dikirim ke WA Owner.", "info");
@@ -870,7 +883,9 @@
             
             let crmHtml = ''; for (const [phone, points] of Object.entries(masterDB.customers)) { crmHtml += `<tr><td>${phone}</td><td style="color:var(--owner); font-weight:bold;">${points} Poin</td><td><button class="btn-main btn-wa" style="padding: 4px; font-size:10px;" onclick="broadcastPromo('${phone}')">Promo WA</button></td></tr>`; }
             document.getElementById('crm-list').innerHTML = crmHtml === '' ? '<tr><td colspan="3" class="p-center">Belum ada data pelanggan</td></tr>' : crmHtml;
-            document.getElementById('kasir-list').innerHTML = globalDB.cashiers.map((c, i) => `<tr><td>${c.name}</td><td>${c.pin}</td><td><button class="btn-main" style="padding: 4px; font-size:10px; background:var(--danger);" onclick="delKasir(${i})">Hapus</button></td></tr>`).join('');
+            
+            let safeCashiers = (globalDB && globalDB.cashiers) ? globalDB.cashiers : [];
+            document.getElementById('kasir-list').innerHTML = safeCashiers.map((c, i) => `<tr><td>${c.name}</td><td>${c.pin}</td><td><button class="btn-main" style="padding: 4px; font-size:10px; background:var(--danger);" onclick="delKasir(${i})">Hapus</button></td></tr>`).join('');
         }
 
         function addDynamicProduct() {
@@ -887,10 +902,11 @@
         function addKasir() {
             const n = document.getElementById('new-kasir-name').value.trim(); const p = document.getElementById('new-kasir-pin').value.trim();
             if(!n || !p) return showToast("Nama dan PIN harus diisi", "error");
+            if(!globalDB.cashiers) globalDB.cashiers = [];
             globalDB.cashiers.push({name: n, pin: p}); saveGlobalDB(); showToast("Kasir ditambah!");
-            document.getElementById('new-kasir-name').value=''; document.getElementById('new-kasir-pin').value=''; renderOwnerDash();
+            document.getElementById('new-kasir-name').value=''; document.getElementById('new-kasir-pin').value=''; renderOwnerDash(); renderLoginUsers();
         }
-        function delKasir(idx) { if(confirm("Hapus data kasir ini?")) { globalDB.cashiers.splice(idx, 1); saveGlobalDB(); renderOwnerDash(); showToast("Kasir Dihapus"); } }
+        function delKasir(idx) { if(confirm("Hapus data kasir ini?")) { globalDB.cashiers.splice(idx, 1); saveGlobalDB(); renderOwnerDash(); renderLoginUsers(); showToast("Kasir Dihapus"); } }
 
         function broadcastPromo(phone) { window.open(`https://api.whatsapp.com/send?phone=${phone}&text=Halo Pelanggan Setia *Rizqiyya Pertabotol*!%0AKami ada promo diskon khusus untuk Anda hari ini. Tunjukkan pesan ini ke kasir untuk menukar poin/klaim diskon.%0ATerima Kasih!`, '_blank'); }
 
@@ -901,9 +917,9 @@
             csvContent += "TANGGAL SHIFT,OMSET HARIAN\n";
             masterDB.shiftHistory.forEach(h => { csvContent += `${h.date},${h.omset}\n`; });
             csvContent += "\nRIWAYAT PENGELUARAN TOKO\nTgl,Keterangan,Nominal\n";
-            masterDB.pengeluaranHistory.forEach(p => { csvContent += `${p.date}${p.time},${p.desc},${p.amount}\n`; });
+            masterDB.pengeluaranHistory.forEach(p => { csvContent += `${p.date} ${p.time},${p.desc},${p.amount}\n`; });
             csvContent += "\nDAFTAR PIUTANG (KASBON)\nNama,No WA,Total Utang\n";
-            masterDB.piutangList.forEach(p => { csvContent += `${p.name},${p.phone\vert{}\vert{}'-'},${p.amount}\n`; });
+            masterDB.piutangList.forEach(p => { csvContent += `${p.name},${p.phone||'-'},${p.amount}\n`; });
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", `Laporan_Rizqiyya_${activeBranch}_${new Date().toLocaleDateString('id-ID')}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast("Mengunduh Laporan CSV...");
         }
