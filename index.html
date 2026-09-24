@@ -52,7 +52,7 @@
 
         .panel { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .panel-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stock-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
         .stock-item { background: var(--bg-dark); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; position: relative; }
         .stock-val { font-size: 28px; font-weight: 800; color: var(--accent); margin: 5px 0; transition: 0.3s; }
         .stock-val.low-stock { animation: blink-warning 1s infinite; }
@@ -122,7 +122,7 @@
 
     <div id="login-section">
         <div class="login-box">
-            <!-- LOGO RIZQIYYA KONSEP 2 (SVG) -->
+            <!-- LOGO RIZQIYYA -->
             <div class="login-logo">
                 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e293b' stroke='%2316a34a' stroke-width='4'/%3E%3Cpath d='M30 30c0-5 15-5 15 0v45c0 5-15 5-15 0z' fill='%23fff'/%3E%3Cpath d='M45 35h15c15 0 15 20 0 20h-15' fill='none' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M50 55l15 20' stroke='%2316a34a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M75 75q5 10-5 10-10 0-5-10l5-7z' fill='%233b82f6'/%3E%3C/svg%3E" alt="Rizqiyya Logo">
             </div>
@@ -171,13 +171,8 @@
                 <div id="view-pos">
                     <div class="panel" style="margin-bottom: 20px;">
                         <div class="panel-title">Stok Fisik (<span id="st-branch"></span>)</div>
-                        <p style="font-size:11px; color:var(--warning); margin-bottom:10px;">*Stok terpisah per cabang. Berkurang otomatis saat jual Galon/BBM.</p>
+                        <p style="font-size:11px; color:var(--warning); margin-bottom:10px;">*Stok terpisah per cabang. Berkurang otomatis saat jual BBM.</p>
                         <div class="stock-grid">
-                            <div class="stock-item">
-                                <div style="font-size: 11px; color: var(--text-muted);">GALON TERISI</div>
-                                <div class="stock-val" id="s-galon">0</div>
-                                <div class="stock-ctrl"><button onclick="updStock('galon', -1)">-</button><button onclick="updStock('galon', 1)">+</button></div>
-                            </div>
                             <div class="stock-item">
                                 <div style="font-size: 11px; color: var(--text-muted);">BOTOL TERISI</div>
                                 <div class="stock-val" id="s-botol">0</div>
@@ -281,7 +276,7 @@
                         <div id="ow-katalog" class="ow-section hidden">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                                 <input type="text" id="cat-name" class="form-control" placeholder="Nama Produk">
-                                <input type="text" id="cat-kategori" class="form-control" placeholder="Kategori (Harus ada 'BBM'/'Galon')">
+                                <input type="text" id="cat-kategori" class="form-control" placeholder="Kategori (Cth: BBM Pertamax)">
                                 <input type="number" id="cat-tunai" class="form-control" placeholder="Harga Tunai">
                                 <input type="number" id="cat-qris" class="form-control" placeholder="Harga QRIS">
                                 <input type="number" id="cat-vol" class="form-control" placeholder="Vol (BBM Liter)">
@@ -408,7 +403,7 @@
             { id: 'p05', name: 'Pertalite 0.5L', priceTunai: 7000, priceQris: 8000, cat: 'BBM Pertalite', vol: 0.5 },
             { id: 'p10', name: 'Pertalite 1L', priceTunai: 13000, priceQris: 14000, cat: 'BBM Pertalite', vol: 1 },
             { id: 'm05', name: 'Pertamax 0.5L', priceTunai: 10000, priceQris: 11000, cat: 'BBM Pertamax', vol: 0.5 },
-            { id: 'g01', name: 'Aqua Galon', priceTunai: 20000, priceQris: 21000, cat: 'Galon Air', vol: 0 }
+            { id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1 }
         ];
 
         function formatRp(num) { return 'Rp ' + num.toLocaleString('id-ID'); }
@@ -448,8 +443,19 @@
         function loadBranchDB(branchName) {
             let dbName = 'rizqiyya_db_' + branchName.replace(/\s+/g, '_');
             let saved = localStorage.getItem(dbName);
-            if(saved) masterDB = JSON.parse(saved);
-            else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokGalon: 15, stokBotol: 45 };
+            if(saved) {
+                masterDB = JSON.parse(saved);
+                
+                // SKRIP AUTO-UPDATE KATALOG (Menghapus Galon & Menambah Pertamax 1L dari memori lama)
+                if(masterDB.catalog.some(p => p.id === 'g01')) {
+                    masterDB.catalog = masterDB.catalog.filter(p => p.id !== 'g01');
+                }
+                if(!masterDB.catalog.some(p => p.id === 'm10')) {
+                    masterDB.catalog.push({ id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1 });
+                }
+                
+            }
+            else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45 };
         }
 
         function saveBranchDB() {
@@ -503,13 +509,11 @@
 
         // --- INVENTORY ---
         function updateStockUI() {
-            const elGalon = document.getElementById('s-galon'); const elBotol = document.getElementById('s-botol');
-            elGalon.innerText = masterDB.stokGalon; elBotol.innerText = masterDB.stokBotol;
-            if(masterDB.stokGalon < 5) elGalon.classList.add('low-stock'); else elGalon.classList.remove('low-stock');
+            const elBotol = document.getElementById('s-botol');
+            elBotol.innerText = masterDB.stokBotol;
             if(masterDB.stokBotol < 5) elBotol.classList.add('low-stock'); else elBotol.classList.remove('low-stock');
         }
         function updStock(type, val) {
-            if (type === 'galon') masterDB.stokGalon = Math.max(0, masterDB.stokGalon + val);
             if (type === 'botol') masterDB.stokBotol = Math.max(0, masterDB.stokBotol + val);
             updateStockUI(); saveBranchDB();
         }
@@ -602,11 +606,10 @@
             const trxId = Math.floor(100000 + Math.random() * 900000); const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             const sItems = session.cart.map(i => ({...i, finalPrice: getCurrentPrice(i)}));
             
-            let deductBotolQty = 0; let deductGalonQty = 0; let tLiter = 0;
+            let deductBotolQty = 0; let tLiter = 0;
             sItems.forEach(i => { 
                 tLiter += (parseFloat(i.vol) * i.qty || 0); 
                 if(i.cat.toLowerCase().includes('bbm')) deductBotolQty += i.qty;
-                if(i.cat.toLowerCase().includes('galon')) deductGalonQty += i.qty;
             });
 
             masterDB.totalOmset += total; masterDB.totalLiter += tLiter;
@@ -617,7 +620,6 @@
             session.history.push(trx); 
             
             masterDB.stokBotol = Math.max(0, masterDB.stokBotol - deductBotolQty); 
-            masterDB.stokGalon = Math.max(0, masterDB.stokGalon - deductGalonQty);
             updateStockUI();
             
             if(session.method === 'Kasbon') session.stats.kasbon += total;
@@ -729,7 +731,7 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast("Mengunduh Laporan CSV...");
         }
 
-        function resetMaster() { if(confirm("Hapus seluruh data master Cabang INI? (Kasir & Webhook tidak akan terhapus)")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokGalon: 15, stokBotol: 45 }; saveBranchDB(); renderOwnerDash(); initApp(); showToast("Master Cabang Direset."); } }
+        function resetMaster() { if(confirm("Hapus seluruh data master Cabang INI? (Kasir & Webhook tidak akan terhapus)")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45 }; saveBranchDB(); renderOwnerDash(); initApp(); showToast("Master Cabang Direset."); } }
 
         function updateReportUI() {
             const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
@@ -768,7 +770,7 @@
                 }
                 
                 // 2. KIRIM WA OWNER
-                const msg = `*📊 LAPORAN TUTUP SESI RIZQIYYA POS*
+                const msg = `*📊 LAPORAN TUTUP SESI RIZQIYYA PERTABOTOL*
 ============================
 🏢 Cabang: ${activeBranch}
 👤 Kasir: ${session.user}
@@ -789,7 +791,6 @@
 *Total Uang Tunai Masuk: ${formatRp(totUangMasukLaci)}*
 ============================
 *📦 SISA STOK FISIK:*
-• Galon: ${masterDB.stokGalon}
 • Botol BBM: ${masterDB.stokBotol}
 ============================
 Sistem POS Otomatis (✔)`;
