@@ -118,17 +118,19 @@
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
         th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
 
-        /* Thermal Print Optimization (58mm) DENGAN PERBAIKAN BLANK LAYAR */
+        /* Thermal Print Optimization (58mm) TEMA HITAM PUTIH PEKAT */
         #print-area { display: none; }
         @media print {
+            body { background: white; }
             body * { visibility: hidden; }
-            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: black; background: white; padding: 2mm; margin: 0; }
-            #print-area * { visibility: visible; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11.5px; color: #000; background: #fff; padding: 2mm; margin: 0; }
+            #print-area * { visibility: visible; color: #000 !important; }
             .p-center { text-align: center; }
-            .p-bold { font-weight: bold; }
-            .p-line { border-bottom: 1px dashed black; margin: 4px 0; }
-            .p-flex { display: flex; justify-content: space-between; }
-            .p-logo { width: 45px; height: 45px; margin: 0 auto 5px auto; display: block; border-radius: 50%; filter: grayscale(100%); object-fit: contain; }
+            .p-bold { font-weight: 900; }
+            .p-line { border-bottom: 1.5px dashed #000; margin: 6px 0; }
+            .p-flex { display: flex; justify-content: space-between; margin-bottom: 3px; }
+            /* Memaksa logo menjadi hitam putih tajam dengan kontras tinggi */
+            .p-logo { width: 55px; height: 55px; margin: 0 auto 5px auto; display: block; border-radius: 50%; filter: grayscale(100%) contrast(200%) brightness(90%); object-fit: contain; }
         }
     </style>
 </head>
@@ -324,38 +326,39 @@
         </div>
     </div>
 
-    <!-- TEMPLATE CETAK STRUK 58mm -->
+    <!-- TEMPLATE CETAK STRUK 58mm (HITAM PUTIH KLASIK) -->
     <div id="print-area">
         <div class="p-center">
+            <!-- Logo menggunakan filter grayscale tinggi agar hitam pekat -->
             <img src="Gemini_Generated_Image_7l55pe7l55pe7l55.jfif" alt="Logo" class="p-logo">
-            <div class="p-bold" style="font-size: 13px;">RIZQIYYA PERTABOTOL</div>
+            <div class="p-bold" style="font-size: 13.5px;">RIZQIYYA PERTABOTOL</div>
             <div style="font-size: 9px;">Cabang: <span id="p-branch"></span></div>
         </div>
         <div class="p-line"></div>
-        <div>Tgl : <span id="p-date"></span></div>
-        <div>No  : <span id="p-trx"></span></div>
-        <div>Ksr : <span id="p-cashier"></span></div>
+        <div class="p-flex"><span>Tgl:</span><span id="p-date"></span></div>
+        <div class="p-flex"><span>No :</span><span id="p-trx"></span></div>
+        <div class="p-flex"><span>Ksr:</span><span id="p-cashier"></span></div>
         <div class="p-line"></div>
         <div class="p-flex p-bold">
             <span style="width: 45%;">Item</span>
             <span style="width: 15%; text-align: center;">Qty</span>
-            <span style="width: 40%; text-align: right;">Sub</span>
+            <span style="width: 40%; text-align: right;">Subtotal</span>
         </div>
         <div class="p-line"></div>
         <div id="p-items"></div>
         <div class="p-line"></div>
         <div class="p-flex"><span>Metode:</span><span id="p-method" class="p-bold"></span></div>
-        <div class="p-flex"><span>Total:</span><span id="p-total" class="p-bold"></span></div>
-        <div class="p-flex"><span>Bayar:</span><span id="p-pay"></span></div>
-        <div class="p-flex"><span>Kembali:</span><span id="p-change"></span></div>
+        <div class="p-flex"><span>Total :</span><span id="p-total" class="p-bold"></span></div>
+        <div class="p-flex"><span>Bayar :</span><span id="p-pay"></span></div>
+        <div class="p-flex"><span>Kmbali:</span><span id="p-change"></span></div>
         <div class="p-line"></div>
-        <div class="p-center" style="font-size: 9px; margin-top: 5px;">
+        <div class="p-center" style="font-size: 9.5px; margin-top: 6px;">
             Terima Kasih Atas Kunjungan Anda<br>Kebutuhan Rumah & BBM Eceran
         </div>
     </div>
 
     <script>
-        // Data Produk Terintegrasi (Harga Tunai & QRIS/Debit Dinamis Sesuai Instruksi)
+        // Data Produk Terintegrasi
         const catalog = [
             { id: 'p05', name: 'Pertalite 0.5L', priceTunai: 7000, priceQris: 8000, cat: 'pertalite', vol: 0.5 },
             { id: 'p10', name: 'Pertalite 1L', priceTunai: 13000, priceQris: 14000, cat: 'pertalite', vol: 1 },
@@ -510,7 +513,7 @@
                 totalBox.classList.add('qris-active');
             }
 
-            updateCartUI(); // Recalculate based on payment method
+            updateCartUI(); 
         }
 
         function quickCash(val) {
@@ -542,7 +545,6 @@
             } else {
                 document.getElementById('dm-total').innerText = formatRp(total);
                 
-                // Show QRIS GoPay Image only if method is QRIS
                 if(session.method === 'QRIS') {
                     document.getElementById('dm-img').style.display = 'block';
                     document.getElementById('gopay-info').style.display = 'inline-block';
@@ -582,7 +584,6 @@
             const trxId = Math.floor(100000 + Math.random() * 900000);
             const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             
-            // Map actual paid price into history
             const savedItems = session.cart.map(i => ({...i, finalPrice: getCurrentPrice(i)}));
             const trx = { id: trxId, time, method: session.method, total, cash, change: cash - total, items: savedItems };
             
@@ -627,7 +628,6 @@
                 
                 window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${msg}`, '_blank');
                 
-                // Reset UI
                 session.cart = [];
                 document.getElementById('cash-amount').value = '';
                 updateCartUI();
