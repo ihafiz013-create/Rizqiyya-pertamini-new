@@ -57,14 +57,12 @@
         .product-card:active { transform: scale(0.95); border-color: var(--accent); }
         .product-card h4 { font-size: 13px; margin-bottom: 5px; color: #fff; }
         .price-tunai { font-size: 14px; font-weight: 800; color: var(--warning); margin-bottom: 2px; }
-        .price-qris { font-size: 11px; color: var(--qris-color); font-weight: 700; }
         .badge-vol { display: inline-block; background: var(--border); font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; color: var(--accent); align-self: center;}
 
         .cart-list { max-height: 250px; overflow-y: auto; margin-bottom: 15px; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-dark); padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border); }
         .cart-info { flex: 1; }
         .cart-name { font-size: 13px; font-weight: 700; color: #fff; display: block; margin-bottom: 4px; }
-        .cart-price { font-size: 12px; font-weight: 600; }
         .cart-controls { display: flex; align-items: center; gap: 10px; }
         .qty-btn { width: 28px; height: 28px; border-radius: 6px; background: var(--border); border: none; color: white; font-weight: bold; cursor: pointer; }
         .del-btn { width: 28px; height: 28px; border-radius: 6px; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: var(--danger); cursor: pointer; font-weight: bold; }
@@ -128,7 +126,7 @@
             <img src="Gemini_Generated_Image_7l55pe7l55pe7l55.jfif" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 15px;">Rizqiyya Pertabotol</div>
-        <div style="font-size: 12px; color: var(--accent); margin-top: 5px;">Memuat Infrastruktur Super Enterprise...</div>
+        <div style="font-size: 12px; color: var(--accent); margin-top: 5px;">Menerapkan Sistem Akuntansi Laci (Offline)...</div>
     </div>
     <style>@keyframes hideSplash { to { opacity: 0; visibility: hidden; } }</style>
 
@@ -151,7 +149,7 @@
                 <option value="Nizar">Nizar</option>
             </select>
             <input type="password" id="l-pass" class="form-control" placeholder="PIN Kasir">
-            <input type="number" id="l-modal" class="form-control" placeholder="Modal Awal (Rp)" value="100000">
+            <input type="number" id="l-modal" class="form-control" placeholder="Modal Awal Laci (Rp)" value="100000">
             <button class="btn-main" onclick="handleLogin()">Buka Shift</button>
         </div>
     </div>
@@ -202,9 +200,7 @@
 
                     <div class="panel">
                         <div class="panel-title">Katalog Produk Dinamis</div>
-                        <div id="dynamic-catalog-container">
-                            <!-- Render Katalog Dinamis via JS -->
-                        </div>
+                        <div id="dynamic-catalog-container"></div>
                     </div>
                 </div>
 
@@ -212,7 +208,7 @@
                 <div id="view-piutang" class="hidden">
                     <div class="panel">
                         <div class="panel-title" style="color: var(--warning);">Daftar Kasbon (Piutang) Pelanggan</div>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Pelunasan di sini akan otomatis masuk ke uang Tunai (Omset Laci) shift kasir ini.</p>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Tekan LUNAS jika pelanggan bayar utangnya hari ini. Uang akan otomatis masuk ke Laci Kasir.</p>
                         <table>
                             <thead><tr><th>Tgl Ngutang</th><th>Nama</th><th>Total Utang</th><th>Aksi</th></tr></thead>
                             <tbody id="piutang-list"></tbody>
@@ -223,13 +219,26 @@
                 <!-- VIEW 3: LAPORAN SHIFT -->
                 <div id="view-report" class="hidden">
                     <div class="panel" style="margin-bottom: 20px;">
-                        <div class="panel-title">Ringkasan Omset Shift Ini</div>
+                        <div class="panel-title">Ringkasan Omset & Laci Shift Ini</div>
                         <div class="stock-grid">
-                            <div class="stock-item"><div style="font-size: 11px;">TOTAL PENJUALAN TUNAI & LUNAS KASBON</div><div class="stock-val" id="r-omset" style="font-size:22px;">Rp 0</div></div>
                             <div class="stock-item">
-                                <div style="font-size: 11px;">ESTIMASI FISIK LACI (Modal+Tunai-Keluar)</div>
-                                <div class="stock-val" id="r-tunai-laci" style="color: var(--warning); font-size:22px;">Rp 0</div>
+                                <div style="font-size: 11px;">TOTAL PENJUALAN / OMSET HARI INI</div>
+                                <div class="stock-val" id="r-omset" style="font-size:22px;">Rp 0</div>
+                                <div style="font-size:10px; color:var(--text-muted);">Mencakup Jual Tunai, QRIS, Debit, & Kasbon Baru</div>
                             </div>
+                            <div class="stock-item">
+                                <div style="font-size: 11px;">ESTIMASI UANG FISIK LACI (CASH)</div>
+                                <div class="stock-val" id="r-tunai-laci" style="color: var(--warning); font-size:22px;">Rp 0</div>
+                                <div style="font-size:10px; color:var(--text-muted);">Modal + Jual Tunai + Lunas Utang Lama - Keluar</div>
+                            </div>
+                        </div>
+
+                        <!-- RINCIAN ARUS UANG -->
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                            <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 11px;">Jual Tunai: <br><strong style="color:var(--accent)" id="r-jual-tunai">Rp 0</strong></div>
+                            <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 11px;">QRIS/Debit: <br><strong style="color:#c084fc" id="r-jual-nontunai">Rp 0</strong></div>
+                            <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 11px; border: 1px solid var(--warning);">Utang Baru: <br><strong style="color:var(--warning)" id="r-utang-baru">Rp 0</strong></div>
+                            <div style="flex:1; background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 11px; border: 1px solid var(--primary);">Lunas Utang: <br><strong style="color:var(--primary)" id="r-lunas-utang">Rp 0</strong></div>
                         </div>
 
                         <!-- MODUL PENGELUARAN -->
@@ -252,7 +261,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 4: DASBOR OWNER (KATALOG & ANALITIK) -->
+                <!-- VIEW 4: DASBOR OWNER -->
                 <div id="view-owner" class="hidden">
                     <div class="panel" style="margin-bottom: 20px;">
                         <div class="panel-title" style="color: var(--owner);">
@@ -260,7 +269,7 @@
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                             <input type="text" id="cat-name" class="form-control" placeholder="Nama Produk (Cth: Aqua Galon)">
-                            <input type="text" id="cat-kategori" class="form-control" placeholder="Kategori (Cth: Kebutuhan Rumah / BBM Pertalite)">
+                            <input type="text" id="cat-kategori" class="form-control" placeholder="Kategori (Cth: Kebutuhan Rumah / BBM)">
                             <input type="number" id="cat-tunai" class="form-control" placeholder="Harga Tunai">
                             <input type="number" id="cat-qris" class="form-control" placeholder="Harga QRIS/Debit">
                             <input type="number" id="cat-vol" class="form-control" placeholder="Vol (Kosongkan jika bukan literan)">
@@ -281,7 +290,7 @@
                         
                         <div class="stock-grid">
                             <div class="dash-card">
-                                <h3>Total Omset Kumulatif</h3>
+                                <h3>Total Penjualan Kumulatif</h3>
                                 <div class="dash-val" id="ow-omset">Rp 0</div>
                             </div>
                             <div class="dash-card">
@@ -305,7 +314,7 @@
                     <button class="pay-btn active-tunai" id="btn-tunai" onclick="setPayMethod('Tunai')">Tunai</button>
                     <button class="pay-btn" id="btn-qris" onclick="setPayMethod('QRIS')">QRIS/GoPay</button>
                     <button class="pay-btn" id="btn-debit" onclick="setPayMethod('Debit')">Debit</button>
-                    <button class="pay-btn" id="btn-kasbon" onclick="setPayMethod('Kasbon')">Kasbon</button>
+                    <button class="pay-btn" id="btn-kasbon" onclick="setPayMethod('Kasbon')">Kasbon Baru</button>
                 </div>
 
                 <div class="panel-title" style="margin-top: 15px;">2. Keranjang</div>
@@ -362,7 +371,7 @@
     <div id="close-shift-modal" class="modal-overlay hidden">
         <div class="modal-box">
             <h3 style="color: var(--danger); margin-bottom: 10px;">Tutup Shift & Hitung Laci</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Hitung semua uang kertas & koin di laci kasir sekarang. Komputer akan mencocokkannya dengan omset.</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Hitung semua uang kertas & koin di laci kasir sekarang. Komputer akan mencocokkannya dengan estimasi arus kas.</p>
             <input type="number" id="actual-cash-input" class="form-control" placeholder="Total Uang Fisik di Laci (Rp)">
             <button class="btn-main" style="background: var(--danger);" onclick="processCloseShift()">Validasi & Tutup Shift</button>
             <button class="btn-main" style="background: var(--bg-dark); border: 1px solid var(--border); margin-top: 10px;" onclick="closeShiftModal()">Batal</button>
@@ -398,11 +407,10 @@
         const credentials = { "Hafiz": "2006", "Endang": "2121", "Pakde": "2020", "Khotif": "2222", "Nizar": "1111" };
         
         let session = {
-            active: false, branch: '', user: '', modal: 0, stokGalon: 15, stokBotol: 45, cart: [], method: 'Tunai', history: [], expenses: [],
+            active: false, branch: '', user: '', modal: 0, stokGalon: 15, stokBotol: 45, cart: [], method: 'Tunai', history: [], expenses: [], loginTime: '',
             stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0, pengeluaran: 0 }
         };
 
-        // Master Database default catalog jika kosong
         const defaultCatalog = [
             { id: 'p05', name: 'Pertalite 0.5L', priceTunai: 7000, priceQris: 8000, cat: 'BBM Pertalite', vol: 0.5 },
             { id: 'p10', name: 'Pertalite 1L', priceTunai: 13000, priceQris: 14000, cat: 'BBM Pertalite', vol: 1 },
@@ -468,7 +476,7 @@
             const user = document.getElementById('l-user').value; const pass = document.getElementById('l-pass').value;
             if (!user) return showToast("Pilih kasir!", "error");
             if (credentials[user] === pass) {
-                session = { active: true, branch: document.getElementById('l-branch').value, user, modal: parseInt(document.getElementById('l-modal').value)||0, stokGalon: 15, stokBotol: 45, cart: [], method: 'Tunai', history: [], expenses: [], stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0, pengeluaran: 0 } };
+                session = { active: true, branch: document.getElementById('l-branch').value, user, modal: parseInt(document.getElementById('l-modal').value)||0, stokGalon: 15, stokBotol: 45, cart: [], method: 'Tunai', history: [], expenses: [], loginTime: new Date().toLocaleString('id-ID'), stats: { omset_tunai: 0, qris: 0, debit: 0, kasbon: 0, pelunasan_kasbon: 0, pengeluaran: 0 } };
                 saveData(); location.reload();
             } else showToast("PIN Kasir Salah!", "error");
         }
@@ -526,7 +534,7 @@
             info.innerText = `Pelanggan: ${poinSaatIni} Poin (+${literBaru} Baru)`;
         }
 
-        // --- SISTEM PIUTANG / KASBON LUNAS ---
+        // --- SISTEM PIUTANG (PELUNASAN) ---
         function updatePiutangUI() {
             const tbody = document.getElementById('piutang-list');
             if(masterDB.piutangList.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-center">Tidak ada pelanggan berutang</td></tr>'; return; }
@@ -549,7 +557,7 @@
             }
         }
 
-        // --- PROSES TRANSAKSI ---
+        // --- PROSES TRANSAKSI JUAL BEI ---
         let printMode = 'normal';
         function processCheckout(mode) {
             printMode = mode;
@@ -584,10 +592,10 @@
                 if(i.cat.toLowerCase().includes('bbm')) deductBotolQty += i.qty;
             });
 
-            if(session.method !== 'Kasbon') masterDB.totalOmset += total;
+            masterDB.totalOmset += total;
             masterDB.totalLiter += tLiter;
-            if(phone) masterDB.customers[phone] = (masterDB.customers[phone] || 0) + tLiter;
             
+            if(phone) masterDB.customers[phone] = (masterDB.customers[phone] || 0) + tLiter;
             if(session.method === 'Kasbon') masterDB.piutangList.push({ id: Date.now(), name: custName, amount: total, date: new Date().toLocaleDateString('id-ID') });
 
             const trx = { id: trxId, time, method: session.method, total, cash, change: cash - total, items: sItems, customerName: custName, phone };
@@ -629,7 +637,7 @@
             } catch (error) { showToast("Bluetooth Error. Gunakan cetak standar.", "error"); setTimeout(() => window.print(), 1000); }
         }
 
-        // --- DASHBOARD OWNER ---
+        // --- DASHBOARD OWNER (KATALOG & ANALITIK) ---
         let ownerChart;
         function reqOwnerAccess(el) { document.getElementById('owner-pin').value = ''; document.getElementById('pin-modal').classList.remove('hidden'); }
         function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); }
@@ -642,7 +650,6 @@
         function renderOwnerDash() {
             document.getElementById('ow-omset').innerText = formatRp(masterDB.totalOmset); document.getElementById('ow-liter').innerText = masterDB.totalLiter + " Liter";
             
-            // Render Daftar Produk Master
             const catTbody = document.getElementById('owner-catalog-list');
             catTbody.innerHTML = masterDB.catalog.map(p => `<tr><td>${p.cat}</td><td>${p.name}</td><td>${formatRp(p.priceTunai)}</td>
                 <td><button class="btn-main" style="padding: 4px; font-size:10px; background:var(--danger);" onclick="deleteProduct('${p.id}')">Hapus</button></td></tr>`).join('');
@@ -654,49 +661,47 @@
         }
 
         function addDynamicProduct() {
-            const name = document.getElementById('cat-name').value.trim();
-            const cat = document.getElementById('cat-kategori').value.trim();
-            const pTunai = parseInt(document.getElementById('cat-tunai').value);
-            const pQris = parseInt(document.getElementById('cat-qris').value);
+            const name = document.getElementById('cat-name').value.trim(); const cat = document.getElementById('cat-kategori').value.trim();
+            const pTunai = parseInt(document.getElementById('cat-tunai').value); const pQris = parseInt(document.getElementById('cat-qris').value);
             const vol = parseFloat(document.getElementById('cat-vol').value) || 0;
             if(!name || !cat || !pTunai || !pQris) return showToast("Data Produk Belum Lengkap!", "error");
             
             masterDB.catalog.push({ id: 'dyn_'+Date.now(), name, cat, priceTunai: pTunai, priceQris: pQris, vol });
-            saveData(); showToast("Produk berhasil ditambahkan!"); renderOwnerDash(); initApp();
-            
-            // Reset input
+            saveData(); showToast("Produk ditambahkan!"); renderOwnerDash(); initApp();
             document.getElementById('cat-name').value = ''; document.getElementById('cat-kategori').value = ''; document.getElementById('cat-tunai').value = ''; document.getElementById('cat-qris').value = ''; document.getElementById('cat-vol').value = '';
         }
 
         function deleteProduct(id) {
-            if(confirm("Hapus produk ini dari toko?")) {
-                masterDB.catalog = masterDB.catalog.filter(p => p.id !== id); saveData(); renderOwnerDash(); initApp(); showToast("Produk Dihapus");
-            }
+            if(confirm("Hapus produk ini dari toko?")) { masterDB.catalog = masterDB.catalog.filter(p => p.id !== id); saveData(); renderOwnerDash(); initApp(); showToast("Produk Dihapus"); }
         }
 
         function resetMaster() { if(confirm("Hapus seluruh data Master?")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [] }; saveData(); renderOwnerDash(); initApp(); showToast("Master Direset."); } }
 
         function updateReportUI() {
-            const totJual = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.pelunasan_kasbon;
-            document.getElementById('r-omset').innerText = formatRp(totJual);
+            const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
+            document.getElementById('r-omset').innerText = formatRp(totPenjualanHariIni);
             
-            // Hitungan Kas Laci Fisik (Modal + Uang Tunai Masuk + Pelunasan Kasbon - Uang Pengeluaran)
             const kasFisik = (session.modal + session.stats.omset_tunai + session.stats.pelunasan_kasbon) - session.stats.pengeluaran;
             document.getElementById('r-tunai-laci').innerText = formatRp(kasFisik);
             
+            document.getElementById('r-jual-tunai').innerText = formatRp(session.stats.omset_tunai);
+            document.getElementById('r-jual-nontunai').innerText = formatRp(session.stats.qris + session.stats.debit);
+            document.getElementById('r-utang-baru').innerText = formatRp(session.stats.kasbon);
+            document.getElementById('r-lunas-utang').innerText = formatRp(session.stats.pelunasan_kasbon);
+
             document.getElementById('r-pengeluaran').innerText = `Total Pengeluaran: ${formatRp(session.stats.pengeluaran)}`;
             document.getElementById('exp-list').innerHTML = session.expenses.map(e => `• ${e.desc} (${formatRp(e.amount)})`).join('<br>');
 
             const tbody = document.getElementById('history-list');
             if(session.history.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="p-center">Belum ada transaksi</td></tr>';
             else tbody.innerHTML = [...session.history].reverse().map(t => {
-                let badge = t.method === 'Kasbon' ? 'var(--danger)' : (t.method === 'Pelunasan' ? 'var(--warning)' : 'var(--accent)');
+                let badge = t.method === 'Kasbon' ? 'var(--warning)' : (t.method === 'Pelunasan' ? 'var(--primary)' : 'var(--accent)');
                 let extra = t.method === 'Kasbon' || t.method === 'Pelunasan' ? `<br><span style="font-size:10px; color:var(--text-muted);">${t.customerName}</span>` : '';
                 return `<tr><td>${t.time}</td><td><span style="color:${badge}; font-size:11px; font-weight:bold;">${t.method}</span>${extra}</td><td style="font-weight:bold;">${formatRp(t.total)}</td></tr>`;
             }).join('');
         }
 
-        // --- SISTEM TUTUP SHIFT & HITUNG SELISIH ---
+        // --- SISTEM TUTUP SHIFT & VALIDASI SELISIH ---
         function triggerCloseShift() { document.getElementById('actual-cash-input').value = ''; document.getElementById('close-shift-modal').classList.remove('hidden'); }
         function closeShiftModal() { document.getElementById('close-shift-modal').classList.add('hidden'); }
         
@@ -706,10 +711,11 @@
 
             const expectedCash = (session.modal + session.stats.omset_tunai + session.stats.pelunasan_kasbon) - session.stats.pengeluaran;
             const selisih = actualCash - expectedCash;
-            let selisihText = selisih === 0 ? "✅ Sesuai/Balance (Rp 0)" : (selisih > 0 ? `🔼 PLUS/Lebih: ${formatRp(selisih)}` : `🔻 MINUS/Kurang: ${formatRp(selisih)}`);
+            let selisihText = selisih === 0 ? "✅ SESUAI/BALANCE (Rp 0)" : (selisih > 0 ? `🔼 PLUS/LEBIH: ${formatRp(selisih)}` : `🔻 MINUS/KURANG: ${formatRp(selisih)}`);
 
             const waNum = "6285701994169"; const now = new Date().toLocaleString('id-ID');
             let expList = session.expenses.length > 0 ? session.expenses.map(e => `  - ${e.desc}: ${formatRp(e.amount)}`).join('%0A') : "  (Tidak ada pengeluaran)";
+            const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
 
             const msg = `*📊 LAPORAN TUTUP SHIFT RIZQIYYA PERTABOTOL*
 ============================
@@ -718,29 +724,33 @@
 ⏱ Buka: ${session.loginTime}
 ⏱ Tutup: ${now}
 ============================
-*💰 RINGKASAN OMSET SHIFT:*
-• Modal Laci: ${formatRp(session.modal)}
-• Omset Tunai: ${formatRp(session.stats.omset_tunai)}
-• Pembayaran QRIS/Debit: ${formatRp(session.stats.qris + session.stats.debit)}
-• Piutang Baru (Kasbon): ${formatRp(session.stats.kasbon)}
-• Lunas Kasbon Lama: ${formatRp(session.stats.pelunasan_kasbon)}
+*💰 TOTAL OMSET/PENJUALAN HARI INI: ${formatRp(totPenjualanHariIni)}*
+*(Rincian Penjualan)*
+• Jual Tunai: ${formatRp(session.stats.omset_tunai)}
+• Jual QRIS/Debit: ${formatRp(session.stats.qris + session.stats.debit)}
+• Piutang/Kasbon Baru: ${formatRp(session.stats.kasbon)}
 ============================
-*📉 PENGELUARAN OPERASIONAL:*
+*💸 ARUS KAS LACI FISIK:*
+• (+) Modal Awal: ${formatRp(session.modal)}
+• (+) Jual Tunai: ${formatRp(session.stats.omset_tunai)}
+• (+) Lunas Kasbon Lama: ${formatRp(session.stats.pelunasan_kasbon)}
+• (-) Pengeluaran Operasional: ${formatRp(session.stats.pengeluaran)}
+
+*(Rincian Pengeluaran)*
 ${expList}
-• *Total Keluar:* ${formatRp(session.stats.pengeluaran)}
 ============================
-*💵 VALIDASI KAS FISIK LACI:*
-• Uang Tunai Diharapkan: ${formatRp(expectedCash)}
+*🔍 VALIDASI UANG LACI / SETORAN:*
+• Estimasi Uang Sistem: ${formatRp(expectedCash)}
 • Uang Fisik Dilaporkan: ${formatRp(actualCash)}
-• *Selisih: ${selisihText}*
+• *Selisih Laci: ${selisihText}*
 ============================
 *📦 SISA STOK FISIK:*
 • Galon: ${session.stokGalon} | Botol: ${session.stokBotol}
 ============================
-Sistem Tervalidasi (✔)`;
+Laporan Tervalidasi Sistem (✔)`;
 
             window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${encodeURIComponent(msg)}`, '_blank');
-            masterDB.shiftHistory.push({ date: new Date().toLocaleDateString(), omset: (session.stats.omset_tunai + session.stats.qris + session.stats.debit) });
+            masterDB.shiftHistory.push({ date: new Date().toLocaleDateString(), omset: totPenjualanHariIni });
             session = { active: false }; saveData(); setTimeout(() => location.reload(), 2000);
         }
     </script>
