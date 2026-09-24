@@ -23,7 +23,7 @@
         .hidden { display: none !important; }
         .container { max-width: 1350px; margin: 0 auto; padding: 20px; }
 
-        /* Halaman Login Baru (Nuansa Hijau) */
+        /* Halaman Login */
         #login-section {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
             background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
@@ -37,6 +37,7 @@
             width: 110px; height: 110px; margin: 0 auto 15px auto; border-radius: 50%;
             border: 2px solid var(--primary-light); padding: 4px; background: rgba(34, 197, 94, 0.1);
             display: flex; justify-content: center; align-items: center; box-shadow: 0 0 25px rgba(34, 197, 94, 0.2);
+            overflow: hidden;
         }
         .login-logo-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         .logo-title { font-size: 24px; font-weight: 800; color: var(--primary-light); letter-spacing: 1px; margin-bottom: 5px; }
@@ -132,17 +133,20 @@
         .table-responsive::-webkit-scrollbar { width: 6px; }
         .table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-        /* Thermal Struk Format dengan Logo Baru */
+        /* Area Cetak Struk Thermal Profesional */
         #print-receipt-area { display: none; }
         @media print {
             body * { visibility: hidden; }
             #print-receipt-area, #print-receipt-area * { visibility: visible; }
             #print-receipt-area {
-                position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: black; background: white; padding: 5px; text-align: center;
+                position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 10px; color: black; background: white; padding: 5px; text-align: left;
             }
             .receipt-logo {
-                width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px auto; display: block; filter: grayscale(100%);
+                width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px auto; display: block; filter: grayscale(100%);
             }
+            .receipt-center { text-align: center; }
+            .receipt-line { border-bottom: 1px dashed black; margin: 4px 0; }
+            .receipt-flex { display: flex; justify-content: space-between; }
         }
     </style>
 </head>
@@ -152,7 +156,7 @@
     <div id="login-section">
         <div class="login-card">
             <div class="login-logo-container">
-                <img src="image_2.png" alt="Logo Rizqiyya Pertabotol">
+                <img src="image_2.png" alt="Logo Rizqiyya Pertabotol" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
             </div>
             <div class="logo-title">Rizqiyya Pertabotol</div>
             <div class="welcome-quote">"Sistem kasir profesional, akurat, dan terpercaya untuk kebutuhan BBM eceran Anda[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)."</div>
@@ -192,7 +196,7 @@
     <div id="app-section" class="container hidden">
         <header>
             <div class="header-brand">
-                <img src="image_2.png" alt="Logo" class="header-logo">
+                <img src="image_2.png" alt="Logo" class="header-logo" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
                 <div class="header-left">
                     <h1 id="header-branch-title">Toko Rumah</h1>
                     <span>Kasir: <strong id="active-user-display" style="color: var(--primary-light);">-</strong></span>
@@ -360,33 +364,40 @@
         </div>
     </div>
 
-    <!-- ==================== AREA CETAK STRUK THERMAL ==================== -->
+    <!-- ==================== AREA CETAK STRUK THERMAL PROFESIONAL ==================== -->
     <div id="print-receipt-area">
-        <img src="image_2.png" alt="Logo" class="receipt-logo">
-        <div style="font-weight: bold; font-size: 12px;">RIZQIYYA PERTABOTOL</div>
-        <div id="receipt-branch" style="font-size: 9px;">Cabang: Toko Rumah</div>
-        <div style="font-size: 9px; margin-bottom: 4px;">--------------------------------</div>
-        <div id="receipt-meta" style="font-size: 9px; text-align: left;">
-            Tgl: <span id="r-date"></span><br>
-            Kasir: <span id="r-cashier"></span>
+        <div class="receipt-center">
+            <img src="image_2.png" alt="Logo" class="receipt-logo">
+            <strong style="font-size: 11px;">RIZQIYYA PERTABOTOL</strong><br>
+            <span id="receipt-branch" style="font-size: 9px;">Cabang: Toko Rumah</span>
         </div>
-        <div style="font-size: 9px; margin-bottom: 4px;">--------------------------------</div>
-        <div id="receipt-items-list" style="font-size: 9px; text-align: left; margin-bottom: 4px;"></div>
-        <div style="font-size: 9px; margin-bottom: 4px;">--------------------------------</div>
+        <div class="receipt-line"></div>
+        <div style="font-size: 9px;">
+            <div>Tanggal : <span id="r-date"></span></div>
+            <div>No.Struk: <span id="r-trxid"></span></div>
+            <div>Kasir   : <span id="r-cashier"></span></div>
+        </div>
+        <div class="receipt-line"></div>
         <div style="font-size: 9px; font-weight: bold; display: flex; justify-content: space-between;">
-            <span>TOTAL:</span> <span id="r-total">Rp 0</span>
+            <span style="width: 48%;">Item</span>
+            <span style="width: 15%; text-align: center;">Qty</span>
+            <span style="width: 35%; text-align: right;">Total</span>
         </div>
-        <div style="font-size: 9px; display: flex; justify-content: space-between;">
-            <span>METODE:</span> <span id="r-method">TUNAI</span>
+        <div class="receipt-line"></div>
+        <div id="receipt-items-list" style="font-size: 9px; margin-bottom: 4px;">
+            <!-- Dinamis Items -->
         </div>
-        <div style="font-size: 9px; display: flex; justify-content: space-between;">
-            <span>BAYAR:</span> <span id="r-cash">Rp 0</span>
+        <div class="receipt-line"></div>
+        <div style="font-size: 9px;">
+            <div class="receipt-flex"><span>Metode</span>: <span id="r-method">TUNAI</span></div>
+            <div class="receipt-flex"><span>Total</span>: <strong id="r-total">Rp 0</strong></div>
+            <div class="receipt-flex"><span>Bayar</span>: <span id="r-cash">Rp 0</span></div>
+            <div class="receipt-flex"><span>Kembali</span>: <span id="r-change">Rp 0</span></div>
         </div>
-        <div style="font-size: 9px; display: flex; justify-content: space-between;">
-            <span>KEMBALI:</span> <span id="r-change">Rp 0</span>
+        <div class="receipt-line"></div>
+        <div class="receipt-center" style="font-size: 9px; margin-top: 5px;">
+            Terima Kasih atas Kunjungan Anda!<br>Semoga Berkah Selalu.
         </div>
-        <div style="font-size: 9px; margin-top: 6px;">--------------------------------</div>
-        <div style="font-size: 9px; margin-top: 4px;">TERIMA KASIH<br>Layanan BBM Eceran Terpercaya[span_4](start_span)[span_4](end_span)</div>
     </div>
 
     <script>
@@ -399,21 +410,18 @@
         };
 
         const products = [
-            // Pertalite (0,5L, 1L, 2L) - Tunai & QRIS
-            { id: 1, name: "Pertalite 0,5 Liter", price: 7000, type: "Tunai", category: "pertalite" },
-            { id: 2, name: "Pertalite 0,5 Liter", price: 8000, type: "QRIS", category: "pertalite" },
-            { id: 3, name: "Pertalite 1 Liter", price: 13000, type: "Tunai", category: "pertalite" },
-            { id: 4, name: "Pertalite 1 Liter", price: 14000, type: "QRIS", category: "pertalite" },
-            { id: 5, name: "Pertalite 2 Liter", price: 25000, type: "Tunai", category: "pertalite" },
-            { id: 6, name: "Pertalite 2 Liter", price: 26000, type: "QRIS", category: "pertalite" },
-            
-            // Pertamax (0,5L, 1L, 2L) - Tunai & QRIS
-            { id: 7, name: "Pertamax 0,5 Liter", price: 10000, type: "Tunai", category: "pertamax" },
-            { id: 8, name: "Pertamax 0,5 Liter", price: 11000, type: "QRIS", category: "pertamax" },
-            { id: 9, name: "Pertamax 1 Liter", price: 19000, type: "Tunai", category: "pertamax" },
-            { id: 10, name: "Pertamax 1 Liter", price: 20000, type: "QRIS", category: "pertamax" },
-            { id: 11, name: "Pertamax 2 Liter", price: 38000, type: "Tunai", category: "pertamax" },
-            { id: 12, name: "Pertamax 2 Liter", price: 39000, type: "QRIS", category: "pertamax" },
+            { id: 1, name: "Pertalite 0,5L", price: 7000, type: "Tunai", category: "pertalite" },
+            { id: 2, name: "Pertalite 0,5L", price: 8000, type: "QRIS", category: "pertalite" },
+            { id: 3, name: "Pertalite 1L", price: 13000, type: "Tunai", category: "pertalite" },
+            { id: 4, name: "Pertalite 1L", price: 14000, type: "QRIS", category: "pertalite" },
+            { id: 5, name: "Pertalite 2L", price: 25000, type: "Tunai", category: "pertalite" },
+            { id: 6, name: "Pertalite 2L", price: 26000, type: "QRIS", category: "pertalite" },
+            { id: 7, name: "Pertamax 0,5L", price: 10000, type: "Tunai", category: "pertamax" },
+            { id: 8, name: "Pertamax 0,5L", price: 11000, type: "QRIS", category: "pertamax" },
+            { id: 9, name: "Pertamax 1L", price: 19000, type: "Tunai", category: "pertamax" },
+            { id: 10, name: "Pertamax 1L", price: 20000, type: "QRIS", category: "pertamax" },
+            { id: 11, name: "Pertamax 2L", price: 38000, type: "Tunai", category: "pertamax" },
+            { id: 12, name: "Pertamax 2L", price: 39000, type: "QRIS", category: "pertamax" },
         ];
 
         let currentSession = {
@@ -663,8 +671,10 @@
         function finalizeTransaction(method, total, cashGiven) {
             const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             const change = method === 'Tunai' ? cashGiven - total : 0;
+            const trxId = Math.floor(100000 + Math.random() * 900000);
             
             const tx = {
+                id: trxId,
                 time: timeStr,
                 method: method,
                 total: total,
@@ -691,6 +701,7 @@
             const message = `*STRUK NOTIFIKASI RIZQIYYA PERTABOTOL*` +
                             `\nCabang: ${currentSession.branch}` +
                             `\nKasir: ${currentSession.cashier}` +
+                            `\nNo. Struk: ${tx.id}` +
                             `\nWaktu: ${tx.time}` +
                             `\nMetode: ${tx.method}` +
                             `\n\n*Rincian Belanja:*` +
@@ -708,11 +719,18 @@
         function triggerReceiptPrint(tx) {
             document.getElementById("receipt-branch").textContent = `Cabang: ${currentSession.branch}`;
             document.getElementById("r-date").textContent = `${new Date().toLocaleDateString('id-ID')} ${tx.time}`;
+            document.getElementById("r-trxid").textContent = tx.id;
             document.getElementById("r-cashier").textContent = currentSession.cashier;
             
             let listHtml = "";
             tx.items.forEach(i => {
-                listHtml += `<div>${i.name} (${i.qty}x)<br>Rp ${(i.price * i.qty).toLocaleString('id-ID')}</div>`;
+                listHtml += `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span style="width: 48%;">${i.name}</span>
+                        <span style="width: 15%; text-align: center;">${i.qty}x</span>
+                        <span style="width: 35%; text-align: right;">Rp ${(i.price * i.qty).toLocaleString('id-ID')}</span>
+                    </div>
+                `;
             });
             document.getElementById("receipt-items-list").innerHTML = listHtml;
             document.getElementById("r-total").textContent = `Rp ${tx.total.toLocaleString('id-ID')}`;
