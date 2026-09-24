@@ -3,118 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizqiyya Pertabotol - Luxury POS</title>
+    <title>Rizqiyya Pertabotol - Executive POS</title>
     <style>
         :root {
-            --bg-deep: #0f172a;
-            --bg-card: #1e293b;
-            --bg-glass: rgba(30, 41, 59, 0.7);
+            --bg-base: #070b14;
+            --bg-card: #111827;
             --gold: #d4af37;
             --gold-light: #f3e5ab;
-            --gold-hover: #b89728;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #10b981;
-            --danger: #ef4444;
-            --border: rgba(212, 175, 55, 0.2);
+            --gold-dark: #aa820a;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --accent: #059669;
+            --danger: #dc2626;
+            --border: rgba(212, 175, 55, 0.25);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif; }
-        body { background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); color: var(--text-main); min-height: 100vh; padding-bottom: 40px; }
+        body { background: radial-gradient(circle at top, #1f2937 0%, var(--bg-base) 100%); color: var(--text-main); min-height: 100vh; padding-bottom: 40px; }
 
         .hidden { display: none !important; }
-        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1350px; margin: 0 auto; padding: 20px; }
 
-        /* Luxury Login Section */
+        /* Halaman Login Eksekutif */
         #login-section {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
+            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+            padding: 20px;
         }
         .login-card {
-            background: var(--bg-card); padding: 40px; border-radius: 16px; border: 1px solid var(--border);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6); width: 100%; max-width: 440px; text-align: center;
-            backdrop-filter: blur(10px);
+            background: var(--bg-card); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--border);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8); width: 100%; max-width: 460px; text-align: center;
+            backdrop-filter: blur(12px);
         }
-        .logo-title { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: 1px; margin: 15px 0 5px 0; }
-        .logo-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
-        .form-group { margin-bottom: 18px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 12px; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; }
-        .form-control { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; color: white; transition: 0.3s; }
-        .form-control:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .login-logo-container {
+            width: 110px; height: 110px; margin: 0 auto 15px auto; border-radius: 50%;
+            border: 2px solid var(--gold); padding: 4px; background: rgba(212, 175, 55, 0.05);
+            display: flex; justify-content: center; align-items: center; box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+        }
+        .login-logo-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .logo-title { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; margin-bottom: 5px; }
+        .welcome-quote { font-size: 12px; color: var(--gold-light); font-style: italic; margin-bottom: 20px; line-height: 1.5; padding: 0 10px; border-left: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+        
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 11px; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; }
+        .form-control { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: white; transition: 0.3s; }
+        .form-control:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 12px rgba(212, 175, 55, 0.3); }
         
         .btn-luxury {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #0f172a; border: none; border-radius: 8px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #070b14; border: none; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
         }
-        .btn-luxury:hover { background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); }
-        .btn-danger-luxury { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: white; }
-        .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 600; }
+        .btn-luxury:hover { background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5); }
+        .btn-danger-luxury { background: linear-gradient(135deg, #dc2626 100%, #991b1b 100%); color: white; box-shadow: 0 5px 20px rgba(220, 38, 38, 0.3); }
+        .error-msg { color: var(--danger); font-size: 12px; margin-top: 10px; font-weight: 700; }
 
-        /* Luxury Header */
+        /* Header Utama dengan Logo */
         header {
-            background: var(--bg-card); padding: 18px 25px; border-radius: 14px; border: 1px solid var(--border);
+            background: var(--bg-card); padding: 15px 25px; border-radius: 16px; border: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+        .header-brand { display: flex; align-items: center; gap: 15px; }
+        .header-logo { width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid var(--gold); object-fit: cover; }
         .header-left h1 { font-size: 20px; color: var(--gold); font-weight: 800; letter-spacing: 0.5px; }
-        .header-left span { background: rgba(212, 175, 55, 0.15); color: var(--gold); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; border: 1px solid var(--border); }
+        .header-left span { background: rgba(212, 175, 55, 0.15); color: var(--gold); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); }
         .header-right { display: flex; align-items: center; gap: 20px; font-size: 14px; }
 
         /* Dashboard Grid */
         .dashboard-grid { display: grid; grid-template-columns: 1.7fr 1.3fr; gap: 25px; }
         @media (max-width: 950px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
-        .card { background: var(--bg-card); padding: 25px; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(0,0,0,0.3); margin-bottom: 25px; }
-        .card h3 { margin-bottom: 18px; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 10px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: var(--bg-card); padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 25px; }
+        .card h3 { margin-bottom: 20px; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 12px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Stock Cards */
         .stock-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-        .stock-box { background: #0f172a; border: 1px solid var(--border); padding: 15px; border-radius: 10px; text-align: center; }
-        .stock-box h4 { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-        .stock-box .count { font-size: 24px; font-weight: 800; color: var(--gold-light); margin-bottom: 10px; }
+        .stock-box { background: #0b0f19; border: 1px solid var(--border); padding: 15px; border-radius: 12px; text-align: center; }
+        .stock-box h4 { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .stock-box .count { font-size: 26px; font-weight: 800; color: var(--gold-light); margin-bottom: 10px; }
         .stock-controls { display: flex; justify-content: center; gap: 8px; }
-        .stock-controls button { padding: 6px 14px; font-size: 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; color: white; transition: 0.2s; }
+        .stock-controls button { padding: 6px 14px; font-size: 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; }
         .btn-plus { background: var(--accent); }
         .btn-minus { background: var(--danger); }
 
-        /* Ordered Product Grid (Urut Berdasarkan Kategori & Tipe) */
-        .product-section-title { font-size: 13px; font-weight: 700; color: var(--gold-light); margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--gold); padding-left: 8px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 15px; }
+        /* Katalog Produk */
+        .product-section-title { font-size: 13px; font-weight: 700; color: var(--gold-light); margin: 18px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--gold); padding-left: 10px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
         .product-item {
-            background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; transition: 0.3s;
+            background: #0b0f19; border: 1px solid var(--border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s;
         }
-        .product-item:hover { border-color: var(--gold); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2); transform: translateY(-3px); }
+        .product-item:hover { border-color: var(--gold); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25); transform: translateY(-3px); }
         .product-item h4 { font-size: 13px; margin-bottom: 6px; color: white; font-weight: 600; }
-        .product-item .price { font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
-        .badge-tipe { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 4px; color: white; font-weight: 700; text-transform: uppercase; }
+        .product-item .price { font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+        .badge-tipe { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 6px; color: white; font-weight: 700; text-transform: uppercase; }
         .badge-tunai { background: #2563eb; }
         .badge-qris { background: #9333ea; }
 
         /* Tables & Cart */
         table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        table th, table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
-        table th { background: #0f172a; color: var(--gold-light); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
-        .total-section { font-size: 17px; font-weight: 800; display: flex; justify-content: space-between; margin-bottom: 18px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border); padding: 14px; border-radius: 8px; color: var(--gold-light); }
+        table th, table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        table th { background: #0b0f19; color: var(--gold-light); font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .total-section { font-size: 18px; font-weight: 800; display: flex; justify-content: space-between; margin-bottom: 18px; background: rgba(212, 175, 55, 0.08); border: 1px solid var(--border); padding: 15px; border-radius: 10px; color: var(--gold-light); }
 
-        /* QRIS Modal Luxury */
+        /* QRIS Modal */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85);
-            display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(10px);
         }
         .modal-content {
-            background: var(--bg-card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 90%; max-width: 420px; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            background: var(--bg-card); padding: 35px; border-radius: 20px; border: 1px solid var(--border); width: 90%; max-width: 440px; text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
         }
-        .qris-img { width: 240px; height: auto; border: 3px solid var(--gold); border-radius: 12px; margin: 15px 0; background: white; padding: 5px; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+        .qris-img { width: 250px; height: auto; border: 3px solid var(--gold); border-radius: 14px; margin: 15px 0; background: white; padding: 8px; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3); }
         .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
         .status-waiting { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
         .status-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
 
         /* Tabs */
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 6px; color: var(--text-muted); transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .tab-btn.active { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #0f172a; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #0b0f19; padding: 6px; border-radius: 12px; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 8px; color: var(--text-muted); transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-btn.active { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #070b14; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
 
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-        .report-card { background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid var(--border); border-left: 4px solid var(--gold); }
+        .report-card { background: #0b0f19; padding: 15px; border-radius: 12px; border: 1px solid var(--border); border-left: 4px solid var(--gold); }
         .report-card.green { border-left-color: var(--accent); }
         .report-card.orange { border-left-color: #f59e0b; }
         .report-card h4 { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
@@ -123,22 +132,31 @@
         .table-responsive { max-height: 280px; overflow-y: auto; }
         .table-responsive::-webkit-scrollbar { width: 6px; }
         .table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* Thermal Struk Format dengan Logo */
+        #print-receipt-area { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #print-receipt-area, #print-receipt-area * { visibility: visible; }
+            #print-receipt-area {
+                position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: black; background: white; padding: 5px; text-align: center;
+            }
+            .receipt-logo {
+                width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px auto; display: block; filter: grayscale(100%);
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ==================== HALAMAN LOGIN LUXURY ==================== -->
+    <!-- ==================== HALAMAN LOGIN EKSKLUSIF ==================== -->
     <div id="login-section">
         <div class="login-card">
-            <!-- Luxury Vector Logo -->
-            <svg width="80" height="80" viewBox="0 0 100 100" style="margin: 0 auto; display: block; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">
-                <circle cx="50" cy="50" r="46" fill="#0f172a" stroke="#d4af37" stroke-width="3" />
-                <path d="M35 65 L50 32 L65 65 Z" fill="#d4af37" />
-                <rect x="42" y="52" width="16" height="18" fill="#1e293b" />
-                <text x="50" y="83" font-size="10" fill="#f3e5ab" font-weight="800" text-anchor="middle" letter-spacing="1">RIZQIYYA</text>
-            </svg>
+            <div class="login-logo-container">
+                <img src="watermarked_img_9890763827945036510.jpg" alt="Logo Rizqiyya Pertabotol">
+            </div>
             <div class="logo-title">Rizqiyya Pertabotol</div>
-            <div class="logo-sub">Executive POS System</div>
+            <div class="welcome-quote">"Selamat datang di sistem manajemen modern dan terpercaya. Layanan terbaik untuk kebutuhan bahan bakar eceran Anda hari ini."</div>
 
             <div class="form-group">
                 <label for="login-branch">Pilih Cabang Toko</label>
@@ -171,23 +189,24 @@
         </div>
     </div>
 
-    <!-- ==================== HALAMAN UTAMA DASHBOARD ==================== -->
+    <!-- ==================== HALAMAN UTAMA APLIKASI ==================== -->
     <div id="app-section" class="container hidden">
         <header>
-            <div class="header-left">
-                <h1 id="header-branch-title">Toko Rumah</h1>
-                <span>Kasir: <strong id="active-user-display" style="color: var(--gold-light);">-</strong></span>
+            <div class="header-brand">
+                <img src="watermarked_img_9890763827945036510.jpg" alt="Logo" class="header-logo">
+                <div class="header-left">
+                    <h1 id="header-branch-title">Toko Rumah</h1>
+                    <span>Kasir: <strong id="active-user-display" style="color: var(--gold-light);">-</strong></span>
+                </div>
             </div>
             <div class="header-right">
                 <div>Modal Awal: <strong id="header-modal" style="color: var(--gold-light);">Rp 0</strong></div>
-                <button class="btn-luxury btn-danger-luxury" style="padding: 8px 16px; font-size: 12px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & Kirim WA</button>
+                <button class="btn-luxury btn-danger-luxury" style="padding: 10px 18px; font-size: 12px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & Kirim WA</button>
             </div>
         </header>
 
         <div class="dashboard-grid">
-            <!-- KOLOM KIRI: STOK & KATALOG BERURUTAN -->
             <div>
-                <!-- Manajemen Stok Galon & Botol -->
                 <div class="card">
                     <h3>
                         <span>Manajemen Stok BBM Eceran</span>
@@ -213,10 +232,8 @@
                     </div>
                 </div>
 
-                <!-- Katalog BBM Terurut (Pertalite lalu Pertamax) -->
                 <div class="card">
                     <h3>Katalog BBM Eceran</h3>
-                    
                     <div class="product-section-title">Pertalite (Tunai & QRIS)</div>
                     <div class="product-grid" id="catalog-pertalite"></div>
 
@@ -225,14 +242,12 @@
                 </div>
             </div>
 
-            <!-- KOLOM KANAN: KASIR & LAPORAN -->
             <div>
                 <div class="tabs">
                     <button class="tab-btn active" onclick="switchTab('pos')">Kasir (POS)</button>
                     <button class="tab-btn" onclick="switchTab('rekap')">Laporan & Omset</button>
                 </div>
 
-                <!-- Panel POS -->
                 <div id="tab-pos" class="card">
                     <h3>Keranjang Belanja</h3>
                     <div class="table-responsive">
@@ -265,10 +280,9 @@
                         </div>
                     </div>
 
-                    <button class="btn-luxury" onclick="checkoutProcess()">Proses Pembayaran & Cetak WA</button>
+                    <button class="btn-luxury" onclick="checkoutProcess()">Proses Pembayaran & Cetak Struk</button>
                 </div>
 
-                <!-- Panel Rekap & Omset -->
                 <div id="tab-rekap" class="card hidden">
                     <h3>Rekap Keuangan Shift Ini</h3>
                     <div class="report-grid">
@@ -290,8 +304,8 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 15px; font-size: 13px; background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span>Penjualan Tunai:</span> <strong style="color: #60a5fa;" id="report-tunai">Rp 0</strong></div>
+                    <div style="margin-bottom: 15px; font-size: 13px; background: #0b0f19; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Penjualan Tunai:</span> <strong style="color: #60a5fa;" id="report-tunai">Rp 0</strong></div>
                         <div style="display: flex; justify-content: space-between;"><span>Penjualan QRIS:</span> <strong style="color: #c084fc;" id="report-qris">Rp 0</strong></div>
                     </div>
 
@@ -326,7 +340,7 @@
         </div>
     </div>
 
-    <!-- ==================== MODAL VERIFIKASI QRIS ==================== -->
+    <!-- ==================== MODAL VERIFIKASI QRIS (MEMAKAI FOTO QRIS BAHARU) ==================== -->
     <div id="qris-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 style="color: var(--gold); margin-bottom: 5px;">Scan Pembayaran QRIS</h3>
@@ -334,9 +348,8 @@
             
             <div id="qris-status-box" class="status-badge status-waiting">Menunggu Scan Pelanggan...</div>
             
-            <!-- Foto Barcode QRIS Asli (Menggunakan file gambar yang disediakan) -->
             <div>
-                <img src="watermarked_img_3200e6.jpg" alt="QRIS Barcode Rizqiyya" class="qris-img">
+                <img src="image.png" alt="QRIS Barcode Rizqiyya Baharu" class="qris-img">
             </div>
 
             <div style="font-size: 18px; font-weight: 800; margin-bottom: 18px; color: var(--gold-light);" id="qris-modal-total">
@@ -348,6 +361,35 @@
         </div>
     </div>
 
+    <!-- ==================== AREA CETAK STRUK THERMAL DENGAN LOGO ==================== -->
+    <div id="print-receipt-area">
+        <img src="watermarked_img_9890763827945036510.jpg" alt="Logo" class="receipt-logo">
+        <div style="font-weight: bold; font-size: 12px;">RIZQIYYA PERTABOTOL</div>
+        <div id="receipt-branch" style="font-size: 9px;">Cabang: Toko Rumah</div>
+        <div style="font-size: 9px; margin-bottom: 4px;">--------------------------------</div>
+        <div id="receipt-meta" style="font-size: 9px; text-align: left;">
+            Tgl: <span id="r-date"></span><br>
+            Kasir: <span id="r-cashier"></span>
+        </div>
+        <div style="font-size: 9px; margin-bottom: 4px;">--------------------------------</div>
+        <div id="receipt-items-list" style="font-size: 9px; text-align: left; margin-bottom: 4px;"></div>
+        <div style="font-size: 9px; margin-bottom: 4px;">--------------------------------</div>
+        <div style="font-size: 9px; font-weight: bold; display: flex; justify-content: space-between;">
+            <span>TOTAL:</span> <span id="r-total">Rp 0</span>
+        </div>
+        <div style="font-size: 9px; display: flex; justify-content: space-between;">
+            <span>METODE:</span> <span id="r-method">TUNAI</span>
+        </div>
+        <div style="font-size: 9px; display: flex; justify-content: space-between;">
+            <span>BAYAR:</span> <span id="r-cash">Rp 0</span>
+        </div>
+        <div style="font-size: 9px; display: flex; justify-content: space-between;">
+            <span>KEMBALI:</span> <span id="r-change">Rp 0</span>
+        </div>
+        <div style="font-size: 9px; margin-top: 6px;">--------------------------------</div>
+        <div style="font-size: 9px; margin-top: 4px;">TERIMA KASIH<br>Layanan BBM Eceran Terpercaya</div>
+    </div>
+
     <script>
         const credentials = {
             "Hafiz": "2006",
@@ -357,14 +399,11 @@
             "Nizar": "1111"
         };
 
-        // Katalog Produk Terurut: Pertalite dulu, lalu Pertamax
         const products = [
-            // Pertalite
             { id: 1, name: "Pertalite 1 Liter", price: 13000, type: "Tunai", category: "pertalite" },
             { id: 2, name: "Pertalite 1 Liter", price: 14000, type: "QRIS", category: "pertalite" },
             { id: 3, name: "Pertalite 2 Liter", price: 25000, type: "Tunai", category: "pertalite" },
             { id: 4, name: "Pertalite 2 Liter", price: 26000, type: "QRIS", category: "pertalite" },
-            // Pertamax
             { id: 5, name: "Pertamax 1 Liter", price: 19000, type: "Tunai", category: "pertamax" },
             { id: 6, name: "Pertamax 1 Liter", price: 20000, type: "QRIS", category: "pertamax" },
             { id: 7, name: "Pertamax 2 Liter", price: 38000, type: "Tunai", category: "pertamax" },
@@ -374,6 +413,7 @@
         let currentSession = {
             branch: "",
             cashier: "",
+            loginTime: "",
             modalAwal: 0,
             stockGalon: 15,
             stockBotol: 45,
@@ -402,6 +442,7 @@
             if (credentials[user] === pass) {
                 currentSession.branch = branch;
                 currentSession.cashier = user;
+                currentSession.loginTime = new Date().toLocaleString('id-ID');
                 currentSession.modalAwal = modal;
                 currentSession.totalPemasukan = modal;
 
@@ -420,35 +461,49 @@
             }
         }
 
-        // Perbaikan sistem kirim WhatsApp agar aman dari pemblokiran popup/error pengkodean
         function sendWhatsAppMessage(phone, message) {
             const encodedMessage = encodeURIComponent(message);
-            // Menggunakan universal link api.whatsapp.com yang kompatibel di semua browser desktop/mobile
             const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
             const win = window.open(waUrl, '_blank');
             if (!win) {
-                // Fallback jika popup diblokir browser
                 window.location.href = waUrl;
             }
         }
 
         function closeShiftAndExit() {
-            if (confirm("Apakah Anda yakin ingin menutup shift ini? Laporan rekapitulasi akan dikirim otomatis ke WhatsApp.")) {
-                const waNumber = "085710127234";
+            if (confirm("Apakah Anda yakin ingin menutup shift ini? Laporan rekapitulasi detail akan dikirim otomatis ke WhatsApp.")) {
+                const waNumber = "6285701994169";
+                const closeTime = new Date().toLocaleString('id-ID');
                 
-                const message = `*LAPORAN TUTUP SHIFT RIZQIYYA PERTABOTOL*` +
-                                `\nCabang: ${currentSession.branch}` +
-                                `\nKasir: ${currentSession.cashier}` +
-                                `\nWaktu Tutup: ${new Date().toLocaleString('id-ID')}` +
-                                `\n----------------------------------` +
+                let expenseDetails = currentSession.expenses.length > 0 
+                    ? currentSession.expenses.map(e => `  - ${e.desc}: Rp ${e.amount.toLocaleString('id-ID')}`).join('\n')
+                    : "  (Tidak ada pengeluaran)";
+
+                const message = `*📊 LAPORAN DETAIL TUTUP SHIFT RIZQIYYA PERTABOTOL*` +
+                                `\n==============================` +
+                                `\n🏢 Cabang Toko: ${currentSession.branch}` +
+                                `\n👤 Nama Kasir: ${currentSession.cashier}` +
+                                `\n⏱ Waktu Buka: ${currentSession.loginTime}` +
+                                `\n⏱ Waktu Tutup: ${closeTime}` +
+                                `\n==============================` +
+                                `\n*💰 RINGKASAN KEUANGAN:*` +
                                 `\n• Modal Awal: Rp ${currentSession.modalAwal.toLocaleString('id-ID')}` +
                                 `\n• Penjualan Tunai: Rp ${currentSession.totalTunai.toLocaleString('id-ID')}` +
                                 `\n• Penjualan QRIS: Rp ${currentSession.totalQris.toLocaleString('id-ID')}` +
-                                `\n• *Total Omset*: Rp ${currentSession.totalOmset.toLocaleString('id-ID')}` +
-                                `\n• Pengeluaran: Rp ${currentSession.totalPengeluaran.toLocaleString('id-ID')}` +
-                                `\n• Uang yang Dipakai (Saldo Kasir): Rp ${currentSession.totalPemasukan.toLocaleString('id-ID')}` +
-                                `\n----------------------------------` +
-                                `\nStatus: SHIFT DITUTUP (LUNAS)`;
+                                `\n• *Total Omset Kotor*: Rp ${currentSession.totalOmset.toLocaleString('id-ID')}` +
+                                `\n==============================` +
+                                `\n*📉 PENGELUARAN OPERASIONAL:*` +
+                                `\n${expenseDetails}` +
+                                `\n• *Total Pengeluaran*: Rp ${currentSession.totalPengeluaran.toLocaleString('id-ID')}` +
+                                `\n==============================` +
+                                `\n*💵 SALDO & KASIR:*` +
+                                `\n• Uang Kasir / Saldo Akhir (Modal + Omset - Pengeluaran): Rp ${(currentSession.modalAwal + currentSession.totalOmset - currentSession.totalPengeluaran).toLocaleString('id-ID')}` +
+                                `\n==============================` +
+                                `\n*📦 STOK AKHIR SHIFT:*` +
+                                `\n• Galon Terisi: ${currentSession.stockGalon}` +
+                                `\n• Botol Terisi: ${currentSession.stockBotol}` +
+                                `\n==============================` +
+                                `\nStatus: SHIFT DITUTUP & LAPORAN VALID (✔)`;
 
                 sendWhatsAppMessage(waNumber, message);
                 setTimeout(() => {
@@ -543,7 +598,7 @@
                     <td><span class="badge-tipe ${item.type === 'Tunai' ? 'badge-tunai' : 'badge-qris'}">${item.type}</span></td>
                     <td>${item.qty}</td>
                     <td>Rp ${sub.toLocaleString('id-ID')}</td>
-                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">✕</button></td>
+                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:6px; cursor:pointer;">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -578,7 +633,7 @@
                     alert("Jumlah uang tunai kurang dari total pembayaran!");
                     return;
                 }
-                finalizeTransaction("Tunai", total);
+                finalizeTransaction("Tunai", total, cash);
             }
         }
 
@@ -591,7 +646,7 @@
                 document.getElementById("qris-modal").classList.add("hidden");
                 document.getElementById("qris-status-box").className = "status-badge status-waiting";
                 document.getElementById("qris-status-box").textContent = "Menunggu Scan Pelanggan...";
-                finalizeTransaction("QRIS", total);
+                finalizeTransaction("QRIS", total, total);
             }, 1000);
         }
 
@@ -599,13 +654,16 @@
             document.getElementById("qris-modal").classList.add("hidden");
         }
 
-        function finalizeTransaction(method, total) {
+        function finalizeTransaction(method, total, cashGiven) {
             const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const change = method === 'Tunai' ? cashGiven - total : 0;
             
             const tx = {
                 time: timeStr,
                 method: method,
                 total: total,
+                cash: cashGiven,
+                change: change,
                 items: [...currentSession.cart]
             };
 
@@ -620,9 +678,9 @@
             }
 
             updateReportUI();
+            triggerReceiptPrint(tx);
             
-            // Kirim WhatsApp Struk Otomatis
-            const waNumber = "085710127234";
+            const waNumber = "6285701994169";
             let itemsText = tx.items.map(i => `- ${i.name} (${i.qty}x) : Rp ${(i.price * i.qty).toLocaleString('id-ID')}`).join('\n');
             const message = `*STRUK NOTIFIKASI RIZQIYYA PERTABOTOL*` +
                             `\nCabang: ${currentSession.branch}` +
@@ -636,11 +694,27 @@
 
             sendWhatsAppMessage(waNumber, message);
 
-            alert(`TRANSAKSI BERHASIL (${method})!\nTotal: Rp ${total.toLocaleString('id-ID')}\nStruk tercetak & terkirim otomatis via WhatsApp.`);
-
             currentSession.cart = [];
             document.getElementById("cash-given").value = "";
             renderCart();
+        }
+
+        function triggerReceiptPrint(tx) {
+            document.getElementById("receipt-branch").textContent = `Cabang: ${currentSession.branch}`;
+            document.getElementById("r-date").textContent = `${new Date().toLocaleDateString('id-ID')} ${tx.time}`;
+            document.getElementById("r-cashier").textContent = currentSession.cashier;
+            
+            let listHtml = "";
+            tx.items.forEach(i => {
+                listHtml += `<div>${i.name} (${i.qty}x)<br>Rp ${(i.price * i.qty).toLocaleString('id-ID')}</div>`;
+            });
+            document.getElementById("receipt-items-list").innerHTML = listHtml;
+            document.getElementById("r-total").textContent = `Rp ${tx.total.toLocaleString('id-ID')}`;
+            document.getElementById("r-method").textContent = tx.method;
+            document.getElementById("r-cash").textContent = `Rp ${tx.cash.toLocaleString('id-ID')}`;
+            document.getElementById("r-change").textContent = `Rp ${tx.change.toLocaleString('id-ID')}`;
+
+            window.print();
         }
 
         function addExpense() {
@@ -689,4 +763,3 @@
         }
     </script>
 </body>
-</html>
