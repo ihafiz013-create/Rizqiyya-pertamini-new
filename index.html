@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rizqiyya Pertabotol - Mobile POS System</title>
+    <title>Rizqiyya Pertabotol - Executive POS System</title>
     <style>
         :root {
-            --bg-body: #121212;
-            --bg-card: #1e1e1e;
-            --border-classic: #333333;
-            --accent-green: #2e7d32;
-            --accent-green-light: #4caf50;
-            --text-main: #e0e0e0;
-            --text-muted: #9e9e9e;
-            --danger: #c62828;
+            --bg-body: #0d1117;
+            --bg-card: #161b22;
+            --border-color: #30363d;
+            --accent-green: #238636;
+            --accent-green-light: #2ea043;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --danger: #da3633;
             --gold: #d4af37;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -22,43 +22,62 @@
         .hidden { display: none !important; }
         .container { max-width: 1300px; margin: 0 auto; padding: 15px; }
 
-        /* Halaman Login Mobile Optimized */
+        /* Animasi Splash Intro */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040d08;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
+            animation: fadeOutSplash 0.8s ease 2.5s forwards;
+        }
+        .splash-logo {
+            width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--accent-green-light);
+            background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden;
+            box-shadow: 0 0 30px rgba(46,160,67,0.5); animation: pulseLogo 1.5s infinite alternate;
+        }
+        .splash-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .splash-title { font-size: 24px; font-weight: 800; color: #fff; margin-top: 15px; letter-spacing: 1.5px; animation: fadeInText 1s ease 0.3s both; }
+        .splash-subtitle { font-size: 13px; color: var(--accent-green-light); font-style: italic; margin-top: 5px; animation: fadeInText 1s ease 0.6s both; }
+        
+        @keyframes pulseLogo { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
+        @keyframes fadeInText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutSplash { to { opacity: 0; visibility: hidden; } }
+
+        /* Halaman Login */
         #login-section {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background: #0a0a0a; padding: 15px;
+            background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%); padding: 15px;
         }
         .login-card {
-            background: var(--bg-card); padding: 35px 25px; border-radius: 6px; border: 1px solid var(--border-classic);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 420px; text-align: center;
+            background: var(--bg-card); padding: 35px 25px; border-radius: 8px; border: 1px solid var(--border-color);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7); width: 100%; max-width: 420px; text-align: center;
         }
         .login-logo-container {
-            width: 100px; height: 100px; margin: 0 auto 15px auto; border-radius: 50%;
-            border: 2px solid var(--accent-green-light); background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden; box-shadow: 0 0 15px rgba(76,175,80,0.3);
+            width: 95px; height: 95px; margin: 0 auto 12px auto; border-radius: 50%;
+            border: 2px solid var(--accent-green-light); background: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden;
         }
         .login-logo-container img { width: 100%; height: 100%; object-fit: cover; }
-        .logo-title { font-size: 20px; font-weight: bold; color: #fff; letter-spacing: 1px; margin-bottom: 5px; }
+        .logo-title { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 1px; margin-bottom: 4px; }
         .welcome-quote { font-size: 11px; color: var(--text-muted); font-style: italic; margin-bottom: 20px; line-height: 1.4; }
         
         .form-group { margin-bottom: 14px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .form-control { width: 100%; padding: 12px; background: #121212; border: 1px solid var(--border-classic); border-radius: 4px; font-size: 14px; color: #fff; }
-        .form-control:focus { outline: none; border-color: var(--accent-green-light); }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .form-control { width: 100%; padding: 12px; background: #0d1117; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; color: #fff; }
+        .form-control:focus { outline: none; border-color: var(--accent-green-light); box-shadow: 0 0 8px rgba(46,160,67,0.3); }
         
-        .btn-classic {
-            width: 100%; padding: 14px; background: var(--accent-green); color: #ffffff; border: none; border-radius: 4px; font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;
+        .btn-system {
+            width: 100%; padding: 14px; background: var(--accent-green); color: #ffffff; border: none; border-radius: 6px; font-size: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;
         }
-        .btn-classic:hover { background: var(--accent-green-light); color: #000; }
-        .btn-danger-classic { background: var(--danger); }
-        .error-msg { color: #ef5350; font-size: 12px; margin-top: 10px; font-weight: bold; }
+        .btn-system:hover { background: var(--accent-green-light); }
+        .btn-danger-system { background: var(--danger); }
+        .error-msg { color: #f85149; font-size: 12px; margin-top: 10px; font-weight: 700; }
 
         /* Header Utama */
         header {
-            background: var(--bg-card); padding: 12px 20px; border-radius: 6px; border: 1px solid var(--border-classic);
+            background: var(--bg-card); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color);
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
         }
         .header-brand { display: flex; align-items: center; gap: 12px; }
-        .header-logo { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--accent-green-light); object-fit: cover; background: #fff; }
-        .header-left h1 { font-size: 16px; color: #fff; }
+        .header-logo { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--accent-green-light); object-fit: cover; background: #fff; }
+        .header-left h1 { font-size: 16px; color: #fff; font-weight: 700; }
         .header-left span { color: var(--text-muted); font-size: 11px; }
         .header-right { display: flex; align-items: center; gap: 15px; font-size: 12px; }
 
@@ -66,74 +85,74 @@
         .dashboard-grid { display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 20px; }
         @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
 
-        .card { background: var(--bg-card); padding: 18px; border-radius: 6px; border: 1px solid var(--border-classic); margin-bottom: 20px; }
-        .card h3 { margin-bottom: 12px; color: #fff; border-bottom: 1px solid var(--border-classic); padding-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: var(--bg-card); padding: 18px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .card h3 { margin-bottom: 12px; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Stock Cards */
         .stock-box-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stock-box { background: #121212; border: 1px solid var(--border-classic); padding: 12px; border-radius: 4px; text-align: center; }
+        .stock-box { background: #0d1117; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; text-align: center; }
         .stock-box h4 { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
-        .stock-box .count { font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+        .stock-box .count { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
         .stock-controls { display: flex; justify-content: center; gap: 6px; }
-        .stock-controls button { padding: 4px 10px; font-size: 14px; font-weight: bold; border: none; border-radius: 3px; cursor: pointer; color: white; }
+        .stock-controls button { padding: 4px 12px; font-size: 14px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; }
         .btn-plus { background: var(--accent-green); }
         .btn-minus { background: var(--danger); }
 
         /* Katalog Produk */
-        .product-section-title { font-size: 11px; font-weight: bold; color: var(--accent-green-light); margin: 12px 0 6px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 2px solid var(--accent-green-light); padding-left: 6px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+        .product-section-title { font-size: 11px; font-weight: 700; color: var(--accent-green-light); margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--accent-green-light); padding-left: 6px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 8px; }
         .product-item {
-            background: #121212; border: 1px solid var(--border-classic); border-radius: 4px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
+            background: #0d1117; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
         }
-        .product-item:hover { border-color: var(--accent-green-light); background: #181818; }
-        .product-item h4 { font-size: 11px; margin-bottom: 4px; color: #fff; font-weight: bold; }
-        .product-item .price { font-size: 11px; color: var(--gold); font-weight: bold; margin-bottom: 6px; }
-        .badge-tipe { display: inline-block; font-size: 8px; padding: 2px 5px; border-radius: 3px; color: white; font-weight: bold; text-transform: uppercase; }
-        .badge-tunai { background: #1565c0; }
-        .badge-qris { background: #6a1b9a; }
+        .product-item:hover { border-color: var(--accent-green-light); background: #1f242c; }
+        .product-item h4 { font-size: 11px; margin-bottom: 4px; color: #fff; font-weight: 700; }
+        .product-item .price { font-size: 11px; color: var(--gold); font-weight: 800; margin-bottom: 6px; }
+        .badge-tipe { display: inline-block; font-size: 8px; padding: 2px 6px; border-radius: 4px; color: white; font-weight: 700; text-transform: uppercase; }
+        .badge-tunai { background: #1f6feb; }
+        .badge-qris { background: #8957e5; }
 
         /* Tables & Cart */
         table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-        table th, table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border-classic); font-size: 12px; }
-        table th { background: #121212; color: var(--text-muted); font-weight: bold; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
-        .total-section { font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 12px; background: #121212; border: 1px solid var(--border-classic); padding: 10px; border-radius: 4px; color: #fff; }
+        table th, table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; }
+        table th { background: #0d1117; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
+        .total-section { font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; margin-bottom: 12px; background: #0d1117; border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; color: #fff; }
 
         /* QRIS Modal */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(1, 4, 9, 0.85);
             display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
         }
         .modal-content {
-            background: var(--bg-card); padding: 25px 20px; border-radius: 6px; border: 1px solid var(--border-classic); width: 100%; max-width: 380px; text-align: center;
+            background: var(--bg-card); padding: 25px 20px; border-radius: 8px; border: 1px solid var(--border-color); width: 100%; max-width: 380px; text-align: center;
         }
-        .qris-img { width: 220px; height: auto; border: 2px solid #fff; border-radius: 4px; margin: 12px 0; background: white; padding: 5px; }
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 3px; font-size: 11px; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
-        .status-waiting { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
-        .status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .qris-img { width: 220px; height: auto; border: 2px solid #fff; border-radius: 6px; margin: 12px 0; background: white; padding: 6px; }
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
+        .status-waiting { background: rgba(210,153,34,0.15); color: #d29922; border: 1px solid rgba(210,153,34,0.4); }
+        .status-success { background: rgba(46,160,67,0.15); color: #3fb950; border: 1px solid rgba(46,160,67,0.4); }
 
         /* Tabs */
-        .tabs { display: flex; gap: 6px; margin-bottom: 12px; background: #121212; padding: 4px; border-radius: 4px; border: 1px solid var(--border-classic); }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: bold; font-size: 11px; cursor: pointer; border-radius: 3px; color: var(--text-muted); text-transform: uppercase; transition: 0.2s; }
+        .tabs { display: flex; gap: 6px; margin-bottom: 12px; background: #0d1117; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 700; font-size: 11px; cursor: pointer; border-radius: 4px; color: var(--text-muted); text-transform: uppercase; transition: 0.2s; }
         .tab-btn.active { background: var(--accent-green); color: #fff; }
 
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-        .report-card { background: #121212; padding: 10px; border-radius: 4px; border: 1px solid var(--border-classic); border-left: 3px solid var(--accent-green-light); }
-        .report-card.orange { border-left-color: #f57c00; }
+        .report-card { background: #0d1117; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); border-left: 3px solid var(--accent-green-light); }
+        .report-card.orange { border-left-color: #d29922; }
         .report-card h4 { font-size: 9px; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; }
-        .report-card .val { font-size: 15px; font-weight: bold; color: #fff; }
+        .report-card .val { font-size: 15px; font-weight: 800; color: #fff; }
 
         .table-responsive { max-height: 240px; overflow-y: auto; }
 
-        /* Area Cetak Struk Mobile Thermal (Lebar 58mm Optimal HP) */
+        /* Area Cetak Struk Thermal */
         #print-receipt-area { display: none; }
         @media print {
             body * { visibility: hidden; }
             #print-receipt-area, #print-receipt-area * { visibility: visible; }
             #print-receipt-area {
-                position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 10px; color: black; background: white; padding: 4px; text-align: left;
+                position: absolute; left: 0; top: 0; width: 58mm; font-family: 'Courier New', Courier, monospace; font-size: 10px; color: black; background: white; padding: 5px; text-align: left;
             }
             .receipt-logo-print {
-                width: 35px; height: 35px; border-radius: 50%; border: 1px solid #000; margin: 0 auto 3px auto; display: block; object-fit: cover;
+                width: 40px; height: 40px; border-radius: 50%; border: 1px solid #000; margin: 0 auto 4px auto; display: block; object-fit: cover;
             }
             .receipt-center { text-align: center; }
             .receipt-line { border-bottom: 1px dashed black; margin: 3px 0; }
@@ -143,6 +162,15 @@
 </head>
 <body>
 
+    <!-- ==================== ANIMASI SPLASH INTRO ==================== -->
+    <div id="splash-screen">
+        <div class="splash-logo">
+            <img src="image_2.png" alt="Logo" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
+        </div>
+        <div class="splash-title">Rizqiyya Pertabotol</div>
+        <div class="splash-subtitle">Memuat Sistem Kasir Profesional...</div>
+    </div>
+
     <!-- ==================== HALAMAN LOGIN ==================== -->
     <div id="login-section">
         <div class="login-card">
@@ -150,7 +178,7 @@
                 <img src="image_2.png" alt="Logo Rizqiyya" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
             </div>
             <div class="logo-title">Rizqiyya Pertabotol</div>
-            <div class="welcome-quote">"Sistem Kasir Multi-Device & Cetak Struk via HP[span_3](start_span)[span_3](end_span)."</div>
+            <div class="welcome-quote">"Selamat datang di sistem kasir multi-device dan cetak struk handal."</div>
 
             <div class="form-group">
                 <label for="login-branch">Pilih Cabang Toko</label>
@@ -178,7 +206,7 @@
                 <label for="modal-awal">Modal Awal Kasir (Rp)</label>
                 <input type="number" id="modal-awal" class="form-control" value="100000">
             </div>
-            <button class="btn-classic" onclick="handleLogin()">Masuk Shift</button>
+            <button class="btn-system" onclick="handleLogin()">Masuk Shift</button>
             <div id="login-error" class="error-msg"></div>
         </div>
     </div>
@@ -195,7 +223,7 @@
             </div>
             <div class="header-right">
                 <div>Modal: <strong id="header-modal" style="color: #fff;">Rp 0</strong></div>
-                <button class="btn-classic btn-danger-classic" style="padding: 7px 12px; font-size: 10px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & WA</button>
+                <button class="btn-system btn-danger-system" style="padding: 7px 12px; font-size: 10px; width: auto;" onclick="closeShiftAndExit()">Tutup Shift & WA</button>
             </div>
         </header>
 
@@ -266,12 +294,12 @@
                     <div class="form-group" id="cash-payment-group">
                         <label for="cash-given">Uang Tunai Diterima (Rp)</label>
                         <input type="number" id="cash-given" class="form-control" placeholder="0" oninput="calculateChange()">
-                        <div style="font-size: 11px; margin-top: 4px; font-weight: bold; color: var(--accent-green-light);">
+                        <div style="font-size: 11px; margin-top: 4px; font-weight: 700; color: var(--accent-green-light);">
                             Kembalian: <span id="change-amount">Rp 0</span>
                         </div>
                     </div>
 
-                    <button class="btn-classic" onclick="checkoutProcess()">Proses & Cetak Struk HP</button>
+                    <button class="btn-system" onclick="checkoutProcess()">Proses & Cetak Struk HP</button>
                 </div>
 
                 <div id="tab-rekap" class="card hidden">
@@ -295,9 +323,9 @@
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 10px; font-size: 11px; background: #121212; padding: 8px; border-radius: 4px; border: 1px solid var(--border-classic);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Tunai:</span> <strong style="color: #64b5f6;" id="report-tunai">Rp 0</strong></div>
-                        <div style="display: flex; justify-content: space-between;"><span>QRIS:</span> <strong style="color: #ba68c8;" id="report-qris">Rp 0</strong></div>
+                    <div style="margin-bottom: 10px; font-size: 11px; background: #0d1117; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Tunai:</span> <strong style="color: #58a6ff;" id="report-tunai">Rp 0</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>QRIS:</span> <strong style="color: #bc8cff;" id="report-qris">Rp 0</strong></div>
                     </div>
 
                     <div style="margin-top: 8px;">
@@ -306,7 +334,7 @@
                             <input type="text" id="expense-desc" class="form-control" placeholder="Keterangan" style="flex: 2;">
                             <input type="number" id="expense-amount" class="form-control" placeholder="Nominal" style="flex: 1;">
                         </div>
-                        <button class="btn-classic btn-danger-classic" style="padding: 7px; font-size: 10px;" onclick="addExpense()">Simpan Pengeluaran</button>
+                        <button class="btn-system btn-danger-system" style="padding: 7px; font-size: 10px;" onclick="addExpense()">Simpan Pengeluaran</button>
                     </div>
 
                     <div style="margin-top: 12px;">
@@ -343,16 +371,16 @@
                 <img src="image.png" alt="QRIS Barcode" class="qris-img" onerror="this.src='https://i.ibb.co/3W6m83n/placeholder-logo.png'">
             </div>
 
-            <div style="font-size: 15px; font-weight: bold; margin-bottom: 12px; color: var(--gold);" id="qris-modal-total">
+            <div style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: var(--gold);" id="qris-modal-total">
                 Total: Rp 0
             </div>
 
-            <button class="btn-classic" id="btn-simulate-qris" onclick="completeQrisPayment()">Simulasi Berhasil (✔)</button>
-            <button class="btn-classic btn-danger-classic" style="margin-top: 6px;" onclick="closeQrisModal()">Batalkan</button>
+            <button class="btn-system" id="btn-simulate-qris" onclick="completeQrisPayment()">Simulasi Berhasil (✔)</button>
+            <button class="btn-system btn-danger-system" style="margin-top: 6px;" onclick="closeQrisModal()">Batalkan</button>
         </div>
     </div>
 
-    <!-- ==================== AREA CETAK STRUK THERMAL MOBILE ==================== -->
+    <!-- ==================== AREA CETAK STRUK THERMAL ==================== -->
     <div id="print-receipt-area">
         <div class="receipt-center">
             <img src="image_2.png" alt="Logo" class="receipt-logo-print" onerror="this.style.display='none'">
@@ -598,7 +626,7 @@
                     <td><span class="badge-tipe ${item.type === 'Tunai' ? 'badge-tunai' : 'badge-qris'}">${item.type}</span></td>
                     <td>${item.qty}</td>
                     <td>Rp ${sub.toLocaleString('id-ID')}</td>
-                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:3px 6px; border-radius:2px; cursor:pointer;">✕</button></td>
+                    <td><button onclick="removeFromCart(${item.id})" style="background:var(--danger); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer;">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
