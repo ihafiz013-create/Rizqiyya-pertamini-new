@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -52,7 +52,7 @@
 
         .panel { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .panel-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .stock-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+        .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .stock-item { background: var(--bg-dark); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; position: relative; }
         .stock-val { font-size: 28px; font-weight: 800; color: var(--accent); margin: 5px 0; transition: 0.3s; }
         .stock-val.low-stock { animation: blink-warning 1s infinite; }
@@ -171,8 +171,13 @@
                 <div id="view-pos">
                     <div class="panel" style="margin-bottom: 20px;">
                         <div class="panel-title">Stok Fisik (<span id="st-branch"></span>)</div>
-                        <p style="font-size:11px; color:var(--warning); margin-bottom:10px;">*Stok terpisah per cabang. Berkurang otomatis saat jual BBM.</p>
+                        <p style="font-size:11px; color:var(--warning); margin-bottom:10px;">*Stok terpisah per cabang. Berkurang otomatis saat jual BBM/Galon.</p>
                         <div class="stock-grid">
+                            <div class="stock-item">
+                                <div style="font-size: 11px; color: var(--text-muted);">GALON TERISI</div>
+                                <div class="stock-val" id="s-galon">0</div>
+                                <div class="stock-ctrl"><button onclick="updStock('galon', -1)">-</button><button onclick="updStock('galon', 1)">+</button></div>
+                            </div>
                             <div class="stock-item">
                                 <div style="font-size: 11px; color: var(--text-muted);">BOTOL TERISI</div>
                                 <div class="stock-val" id="s-botol">0</div>
@@ -446,16 +451,19 @@
             if(saved) {
                 masterDB = JSON.parse(saved);
                 
-                // SKRIP AUTO-UPDATE KATALOG (Menghapus Galon & Menambah Pertamax 1L dari memori lama)
+                // SKRIP AUTO-UPDATE KATALOG & STOK (Migrasi)
                 if(masterDB.catalog.some(p => p.id === 'g01')) {
                     masterDB.catalog = masterDB.catalog.filter(p => p.id !== 'g01');
                 }
                 if(!masterDB.catalog.some(p => p.id === 'm10')) {
                     masterDB.catalog.push({ id: 'm10', name: 'Pertamax 1L', priceTunai: 19000, priceQris: 20000, cat: 'BBM Pertamax', vol: 1 });
                 }
+                if(masterDB.stokGalon === undefined) {
+                    masterDB.stokGalon = 15; // Beri nilai awal jika sebelumnya sempat terhapus
+                }
                 
             }
-            else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45 };
+            else masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15 };
         }
 
         function saveBranchDB() {
@@ -509,11 +517,21 @@
 
         // --- INVENTORY ---
         function updateStockUI() {
+            const elGalon = document.getElementById('s-galon'); 
             const elBotol = document.getElementById('s-botol');
-            elBotol.innerText = masterDB.stokBotol;
-            if(masterDB.stokBotol < 5) elBotol.classList.add('low-stock'); else elBotol.classList.remove('low-stock');
+            
+            if(elGalon) {
+                elGalon.innerText = masterDB.stokGalon;
+                if(masterDB.stokGalon < 5) elGalon.classList.add('low-stock'); else elGalon.classList.remove('low-stock');
+            }
+            if(elBotol) {
+                elBotol.innerText = masterDB.stokBotol;
+                if(masterDB.stokBotol < 5) elBotol.classList.add('low-stock'); else elBotol.classList.remove('low-stock');
+            }
         }
+        
         function updStock(type, val) {
+            if (type === 'galon') masterDB.stokGalon = Math.max(0, masterDB.stokGalon + val);
             if (type === 'botol') masterDB.stokBotol = Math.max(0, masterDB.stokBotol + val);
             updateStockUI(); saveBranchDB();
         }
@@ -606,10 +624,11 @@
             const trxId = Math.floor(100000 + Math.random() * 900000); const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             const sItems = session.cart.map(i => ({...i, finalPrice: getCurrentPrice(i)}));
             
-            let deductBotolQty = 0; let tLiter = 0;
+            let deductBotolQty = 0; let deductGalonQty = 0; let tLiter = 0;
             sItems.forEach(i => { 
                 tLiter += (parseFloat(i.vol) * i.qty || 0); 
                 if(i.cat.toLowerCase().includes('bbm')) deductBotolQty += i.qty;
+                if(i.cat.toLowerCase().includes('galon')) deductGalonQty += i.qty;
             });
 
             masterDB.totalOmset += total; masterDB.totalLiter += tLiter;
@@ -620,6 +639,7 @@
             session.history.push(trx); 
             
             masterDB.stokBotol = Math.max(0, masterDB.stokBotol - deductBotolQty); 
+            masterDB.stokGalon = Math.max(0, masterDB.stokGalon - deductGalonQty);
             updateStockUI();
             
             if(session.method === 'Kasbon') session.stats.kasbon += total;
@@ -731,7 +751,7 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast("Mengunduh Laporan CSV...");
         }
 
-        function resetMaster() { if(confirm("Hapus seluruh data master Cabang INI? (Kasir & Webhook tidak akan terhapus)")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45 }; saveBranchDB(); renderOwnerDash(); initApp(); showToast("Master Cabang Direset."); } }
+        function resetMaster() { if(confirm("Hapus seluruh data master Cabang INI? (Kasir & Webhook tidak akan terhapus)")) { masterDB = { totalOmset: 0, totalLiter: 0, shiftHistory: [], customers: {}, catalog: defaultCatalog, piutangList: [], stokBotol: 45, stokGalon: 15 }; saveBranchDB(); renderOwnerDash(); initApp(); showToast("Master Cabang Direset."); } }
 
         function updateReportUI() {
             const totPenjualanHariIni = session.stats.omset_tunai + session.stats.qris + session.stats.debit + session.stats.kasbon;
@@ -791,6 +811,7 @@
 *Total Uang Tunai Masuk: ${formatRp(totUangMasukLaci)}*
 ============================
 *📦 SISA STOK FISIK:*
+• Galon: ${masterDB.stokGalon}
 • Botol BBM: ${masterDB.stokBotol}
 ============================
 Sistem POS Otomatis (✔)`;
